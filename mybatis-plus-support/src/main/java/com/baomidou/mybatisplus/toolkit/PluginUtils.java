@@ -46,7 +46,6 @@ public final class PluginUtils {
      */
     private static final Map<String, SqlParserInfo> sqlParserInfoCache = new ConcurrentHashMap<>();
 
-
     private PluginUtils() {
         // to do nothing
     }

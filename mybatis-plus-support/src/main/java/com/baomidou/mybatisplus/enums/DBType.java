@@ -26,46 +26,57 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @Date 2016-04-15
  */
 public enum DBType {
+
     /**
      * MYSQL
      */
     MYSQL("mysql", "`%s`", "MySql数据库"),
+
     /**
      * MARIADB
      */
     MARIADB("mariadb", "`%s`", "MariaDB数据库"),
+
     /**
      * ORACLE
      */
     ORACLE("oracle", null, "Oracle数据库"),
+
     /**
      * DB2
      */
     DB2("db2", null, "DB2数据库"),
+
     /**
      * H2
      */
     H2("h2", null, "H2数据库"),
+
     /**
      * HSQL
      */
     HSQL("hsql", null, "HSQL数据库"),
+
     /**
      * SQLITE
      */
     SQLITE("sqlite", "`%s`", "SQLite数据库"),
+
     /**
      * POSTGRE
      */
     POSTGRE("postgresql", "\"%s\"", "Postgre数据库"),
+
     /**
      * SQLSERVER2005
      */
     SQLSERVER2005("sqlserver2005", null, "SQLServer2005数据库"),
+
     /**
      * SQLSERVER
      */
     SQLSERVER("sqlserver", null, "SQLServer数据库"),
+
     /**
      * UNKONWN DB
      */

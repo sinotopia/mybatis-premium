@@ -24,7 +24,7 @@ import org.apache.ibatis.session.Configuration;
  * </p>
  *
  * @author hubin
- * @Date 2016-07-24
+ * @since 2016-07-24
  */
 public interface ISqlInjector {
 

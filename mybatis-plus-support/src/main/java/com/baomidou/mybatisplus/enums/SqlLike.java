@@ -24,18 +24,22 @@ package com.baomidou.mybatisplus.enums;
  * @Date 2016-12-4
  */
 public enum SqlLike {
+
     /**
      * LEFT
      */
     LEFT("left", "左边%"),
+
     /**
      * RIGHT
      */
     RIGHT("right", "右边%"),
+
     /**
      * CUSTOM
      */
     CUSTOM("custom", "定制"),
+
     /**
      * DEFAULT
      */

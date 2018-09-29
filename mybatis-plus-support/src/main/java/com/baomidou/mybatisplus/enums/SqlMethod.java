@@ -21,9 +21,10 @@ package com.baomidou.mybatisplus.enums;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 public enum SqlMethod {
+
     /**
      * 插入
      */
@@ -59,7 +60,6 @@ public enum SqlMethod {
      */
     LOGIC_UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
     LOGIC_UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
-
 
     /**
      * 查询

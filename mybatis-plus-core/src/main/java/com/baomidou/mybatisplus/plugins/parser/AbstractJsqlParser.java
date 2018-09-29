@@ -55,7 +55,6 @@ public abstract class AbstractJsqlParser implements ISqlParser {
      * @param sql        SQL 语句
      * @return SQL 信息
      */
-
     @Override
     public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
         if (this.allowProcess(metaObject)) {

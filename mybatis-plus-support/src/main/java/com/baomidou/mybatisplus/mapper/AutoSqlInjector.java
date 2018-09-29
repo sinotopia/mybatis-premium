@@ -62,7 +62,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * </p>
  *
  * @author hubin sjy tantan
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 public class AutoSqlInjector implements ISqlInjector {
 
@@ -221,10 +221,10 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectInsertOneSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         /*
          * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
-		 * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
-		 * suffix=")" suffixOverrides=","> <if test="xx != null">#{xx},</if>
-		 * </trim>
-		 */
+         * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
+         * suffix=")" suffixOverrides=","> <if test="xx != null">#{xx},</if>
+         * </trim>
+         */
         KeyGenerator keyGenerator = new NoKeyGenerator();
         StringBuilder fieldBuilder = new StringBuilder();
         StringBuilder placeholderBuilder = new StringBuilder();
@@ -279,11 +279,9 @@ public class AutoSqlInjector implements ISqlInjector {
         }
         fieldBuilder.append("\n</trim>");
         placeholderBuilder.append("\n</trim>");
-        String sql = String.format(sqlMethod.getSql(), table.getTableName(), fieldBuilder.toString(),
-            placeholderBuilder.toString());
+        String sql = String.format(sqlMethod.getSql(), table.getTableName(), fieldBuilder.toString(), placeholderBuilder.toString());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        this.addInsertMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource, keyGenerator, keyProperty,
-            keyColumn);
+        this.addInsertMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 
     /**
@@ -657,7 +655,7 @@ public class AutoSqlInjector implements ISqlInjector {
         if (null != table.getResultMap()) {
             /*
              * 存在 resultMap 映射返回
-			 */
+             */
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
@@ -668,7 +666,7 @@ public class AutoSqlInjector implements ISqlInjector {
         } else {
             /*
              * 普通查询
-			 */
+             */
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
@@ -717,9 +715,9 @@ public class AutoSqlInjector implements ISqlInjector {
             }
         }
 
-		/*
+        /*
          * 返回所有查询字段内容
-		 */
+         */
         return columns.toString();
     }
 
@@ -735,7 +733,7 @@ public class AutoSqlInjector implements ISqlInjector {
         StringBuilder columns = new StringBuilder();
         /*
          * 普通查询
-		 */
+         */
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
         // 主键处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
