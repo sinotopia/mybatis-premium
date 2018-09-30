@@ -57,7 +57,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [mybatisplus-sharding-jdbc](https://gitee.com/baomidou/mybatisplus-sharding-jdbc)
 
-[SSM-实战 Demo](http://git.oschina.net/baomidou/SpringWind)
+[SSM-实战 Demo](http://git.oschina.net/juapk/SpringWind)
 
 # 下载地址 | Download
 
@@ -78,7 +78,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 # 其他开源项目 | Other Project
 
 - [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/baomidou/kisso)
-- [Java快速开发框架 SpringWind](http://git.oschina.net/baomidou/SpringWind)
+- [Java快速开发框架 SpringWind](http://git.oschina.net/juapk/SpringWind)
 - [基于Hibernate扩展 Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
 
 # 王者荣耀

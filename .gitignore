@@ -6,6 +6,8 @@
 *.iml
 **/out
 html
+*.ipr
+*.iws
 
 # Eclipse project files
 **/.classpath
@@ -19,5 +21,4 @@ html
 
 # MacOS
 .DS_Store
-
 /repo/

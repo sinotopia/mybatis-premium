@@ -1,74 +1,155 @@
 ﻿# CHANGELOG
 
-## [v2.3.2] 2018.09-28
-- 修复批量事务问题
+
+## [v3.0.3] 2018.09.17
+- 新增筛选查询字段方法
+- fixed orderBy多入参的bug
+- 新增 LogicDeleteByIdWithFill 组件
+- fixed github issues/476 issues/473
+- fixed github issues/360 gitee issues/IMIHN IM6GM
+- 改进 allEq入参的value改用泛型
+- fixed saveOrUpdateBatch使用BatchExecutor
+- fixed 修正getOne获取多条数据为抛出异常
+- 修正service 的getOne 方法
+- 修正service 的个别方法为default方法
+- 修复了page在set了desc下,sql有bug的问题
+- 去除不再需要的方法
+- 解决 generator 的 optional 的俩 jar 问题
+- 重载 select(Predicate<TableFieldInfo> predicate)
+- 其他优化
+
+
+## [v3.0.2] 2018.09.11 
+- 新增 Wrapper 条件辅助类
+- 新增 banner 属性控制是否打印
+- 修复 gitee #IMMF4:批量插入(AR)事务无效
+- fix: entity 无主键,生成 ew 的 where 条件的 bug
+- 处理SqlRunner的sqlSession获取与释放
+- 去除全局缓存sqlSession,增加Model,通用service层sqlSession释放
+- ext: 抽象原生枚举处理类注册，方便扩展
+- 优化扩展性其他
+
+
+## [v3.0.1] 2018.08.31 
+- 修复代码生成器设置表前缀异常
+- 新增 EnumValue 注解方式扫描通用枚举处理
+- 修复逻辑删除混用失败
+- DB2 方言改进何鹏举优化
+- 新增测试用例及其他
+
+
+## [v3.0-RELEASE] 2018.08.28 代号：超级棒棒糖 🍭 
+- 乐观锁 update(et,ew)方法 et带上 version 注解字段回写
+- 优化改进优化代码生成器
+- 包扫描为空时不抛出异常(枚举,别名）
+- 去除 SqlSession
+- 修改 issue 模板,完善注释
+- 优化初始化过程,添加逻辑删除注解次数检测
+- SQL检查允许跳过检查
+- 支持达梦数据库
+- 修改 code 为数值型严谨限制简化 api 层命名及初始值规则
+- 初始化 SQL 解析移至 SqlInjector
+- 其他代码优化
+
+
+## [v3.0-RC3] 2018.08.19 代号：超级棒棒糖 🍭 RC3
+- 支持 TableField select 属性 false 排除默认注入大字段查询
+- 解决 page 反序列化 pages 属性报错
+- 合并2.x dataSource被代理处理
+- 去除DbConfig.columnUnderline属性
+- 过滤掉selectObjs查询结果集为空的情况
+- baseMapper 的 insert 和 update 返回值不再使用包装类
+- fixed Gitee issues/IM3NW
+- 优化代码完善注释等
+
+
+## [v3.0-RC2] 2018.08.10 代号：超级棒棒糖 🍭 RC2
+- 生成器加回 MODULE_NAME 开放配置 config
+- 修复setting - defaultEnumTypeHandler属性配置无效
+- 兼容 Spring boot 1.x 启动.
+- 日常优化 , 测试用例 , 优化抛出异常的过程
+- 新增 Gitee Github issue,pull_request模板
+- 移除数据库关键字转义, 只支持注解模式转义
+- 优化掉抛异常为使用 assert 或者 exceptionUtils
+- 设置下划线转驼峰到 configuration 优化 ColumnUnderline
+- 解决 page 序列化 asc desc 多态序列化异常
+- 默认的 dbType 改为 other, 如果用户没有配置才会自动获取 dbType
+- 优化,ColumnUnderline与MapUnderscoreToCamelCase意义相同
+- fixed ILY8C 生成器指定 IdType 场景导入包
+- 补充注释新增大量测试用例
+
+
+## [v3.0-RC1] 2018.08.01 代号：超级棒棒糖 🍭 RC1
+- 优化工具类部分代码，并修复一个在多线程环境下可能会引发死锁的BUG
+- 新增断言类,顺便修改几处地方的判断抛异常为使用断言
+- 去掉多余的 "implements Serializable"
+- 魔法值都改为全局常量模式
+- 咩咩说了 MP 3.0 分页已经飘飘欲仙了，不在需要迁就使用 PageHelper 模式
+- issue #384 QueryWrapper 支持排除指定字段模式
+- 全新 banner，全新感觉
+- 再优化一下抛异常的过程
+- 修改 class 实例化对象的方式，现在可以实例化私有 class
+- 支持无配置可启动使用 Gitee issues/ILJQA
+- 释放sqlSession,待优化 ActiveRecord单元测试
+- 解决只调用 last 产生的 sql 会出的问题
+- 修复Lambda首位属性为基类属性时错误.
+- 增加泛型限制,格式化下代码.
+- 优化一下 AbstractWrapper 使用的 ISqlSegment
 - 其他
 
 
-## [v2.3.2] 2018.09-17
-- 去除SqlSession
-- 乐观锁优化 > update(et,ew) > 支持乐观锁：et带上version
-- 优化 db2 方言
-- 去除日志警告打印.
-- fix: saveOrUpdateBatch使用BatchExecutor.
-- 开放 IdWorker 雪花算法自定义机器 ID
+## [v3.0-RC] 2018.07.23 代号：超级棒棒糖 🍭 RC
+- 优化 page 当 size 小于 0 自动调整为 list 模式
+- 新增 攻击 SQL 阻断解析器
+- 优化解析核心方法名，新增 querywrapper lambda 转换参数测试
+- 调整通用 service 层方法命名为阿里规范 （ 小白鼠，对不起，请唾弃我们吧！然后修改下您的项目。）
+- 代码生成器允许正则表达式匹配表名
+- 乐观锁 回写更新后的version到实体
+- Github #385:查询动态表名能利用Wrapper
+- 修复 Gitee issues/ILEYD
+- Page 的序列化接口挪到 IPage 接口
+- 解决了 gamma 不能自动赋值 ID
+- 代码改个常量引用优化
 
 
-## [v2.3.1] 2018.08-19
-- 支持 Mariadb db2 代码自动生成
-- 修复获取实体类缓存信息
-- 租户多表关联不设置别名的情况解决
-- 增加自定义模板生成代码示例
-- 分开自定义模板代码生成实例
-- 修改in条件接收参数为动态参数,便于类型调用及普通调用简化操作,保持与notIn一致风格
-- 乐观锁：更新后回写到实体
-- oracle生成代码：支持schema
-- 修复Aop切面DataSource对象无法获取连接
-- 释放sqlSession
-
-## [v2.3] 2018.05.15
-- 数据库方言支持 mariadb
-- 支持全局表前缀配置 tablePrefix 属性
-- 解决多租户字段无别名问题
-- 多租户拦截器支持批量更新操作
-- 新增常用预留数据库类型
-- BaseMapper、ServiceImpl添加UpdateForSet
-- Condition添加获取EntitiyWrapper静态方法
-- 处理打印sql问题
-- 修复freemarker乐观锁、逻辑删除字段判断问题
-- 更改全局配置 > 默认数据库下划线命名=true
-- Wrapper包装SQL添加处理多重嵌套的情况
-- 去除 驼峰设置 PLUS 配置 > 原生配置 (该配置不需要与原生Mybatis混淆)
-- 去掉多个方法对象静态初始化减少启动内存消耗
-- fixed github pull/295 多租户拦截器支持批量更新操作
-- Merge pull request #279:查询列表时会默认的查询总数和总页数 from robinwen/patch-1
-- merge github pull/290 xml column not as
-- configuration setDefaultScriptingLanguage 非空判断
-- 解决乐观锁 updateById 父类对象无法找到异常 github issue 299
-- 增加数据库下划线-实体下划线命名-testcase
-- Merge pull request #301:MP 代码生成器不能识别sqlServer的自增主键 from BestBurning/dev
-- Pagination 对象 copyProperties bug 修复 github issues/309
-- testcase for : Long PK type=INPUT
-- Hikari delegate issue
-- add test case for underline & camel mixed entity by using
-- fixed issues#299 -> 解决updateById(subclass)时会找不到对应的父类库表而报null
-- fixed github issues/318
-- fixed github issues/300
+## [v3.0-gamma] 2018.07.15 代号：超级棒棒糖 🍭 伽玛
+- IPage 新增 listMode 集合模式
+- fixd gitee issues/IL7W4
+- fixed gitee issues/IL7W4
+- 优化生成器包导入
+- 解决 Page ascs，descs 异常
+- 逻辑删除无法 set where entity 一个参数并存逻辑
+- 合并 PR 修改typeAliasesPackage扫描多维度
+- 完善 3.0 测试用例
+- 代码性能优化及其他
 
 
-## [v2.2.0] 2018.03.21
-- 升级 mybatis 3.4.6
-- 升级 mybatis-spring 1.3.2
-- IGKLA:activeRecord模式下，乐观锁不支持 修复activeRecord模式下，乐观锁不支持
-- fixed github issues/236 可配置视图跳过
-- fixed gitee issues/IHN8Y
-- fixed gitee issues/IHUIJ
-- fixed github issues/241 支持 wrapper clone
-- 逻辑删除，支持全update、select类型SQL自动添加逻辑删除字段
-- 重构生成器 QuerySQL 可自定义查询表字段大小等信息
-- 生成器其定义关闭默认模块优化
-- 新增代码生成器基本类型
-- 不存在文件夹递归生成支持
+## [v3.0-beta] 2018.07.07 代号：超级棒棒糖 🍭 贝塔
+- 新增字段 LIKE 查询注入全局配置，默认 true 开启
+- 修改 dbtype 的 oracle db2 修改 CONCAT 方式
+- 修正无论 update 的入参 updateWrapper 如何变化,逻辑删除下依然存在限制条件
+- 注释加上告警，完善注释
+- 修复 github issues/377 378 389
+- 解决逻辑删除同时存在非逻辑删除逻辑
+- 逻辑删除支持 delete set 其他字段，update 排除逻辑删除字段
+- 支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po
+- 修复 gitee issues/IKJ48 IL0B2
+- 其他完善
+
+
+## [v3.0-alpha] 2018.07.01 代号：超级棒棒糖 🍭
+- 升级 JDK 8 + 优化性能 Wrapper 支持 lambda 语法
+- 模块化 MP 合理的分配各个包结构
+- 重构注入方法，支持任意方法精简注入模式
+- 全局配置下划线转换消灭注入 AS 语句
+- 改造 Wrapper 更改为 QueryWrapper UpdateWrapper
+- 重构 分页插件 消灭固定分页模型，支持 Mapper 直接返回 IPage 接口
+- 新增 Rest Api 通过 Controller 层
+- 实体 String 类型字段默认使用 LIKE 查询 SelectOne 默认 LIMIT 1
+- 辅助支持 selectMaps 新增 bean map 互转工具类
+- 增加 db2 支持 starter 改为 Spring boot 2+ 支持
+- 重构生成器提供自定义 DB 多种模板引擎支持
+- 相关 BUG 修复
 
 
 ## [v2.1.9] 2018.01.28 代号：怀念（纪念 2017 baomidou 组织小伙伴 MP 共同成长之路，奔向 2018 旺旺旺）
