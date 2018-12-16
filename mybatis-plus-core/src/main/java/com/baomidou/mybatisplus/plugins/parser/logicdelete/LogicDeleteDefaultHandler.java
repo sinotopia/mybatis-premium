@@ -37,6 +37,9 @@ import net.sf.jsqlparser.expression.StringValue;
  */
 public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
 
+    /**
+     * 缓存表名与逻辑删除字段的映射
+     */
     private static final Map<String, TableFieldInfo> tableLogicDeleteMap = new ConcurrentHashMap<String, TableFieldInfo>();
 
     public LogicDeleteDefaultHandler() {

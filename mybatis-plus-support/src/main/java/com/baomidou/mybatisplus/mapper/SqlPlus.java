@@ -46,7 +46,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      * @return this
      */
     public SqlPlus IS_NOT_NULL(String columns) {
-        handerNull(columns, IS_NOT_NULL);
+        handlerNull(columns, IS_NOT_NULL);
         return this;
     }
 
@@ -59,7 +59,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      * @return
      */
     public SqlPlus IS_NULL(String columns) {
-        handerNull(columns, IS_NULL);
+        handlerNull(columns, IS_NULL);
         return this;
     }
 
@@ -72,7 +72,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      * @return
      */
     public SqlPlus EXISTS(String value) {
-        handerExists(value, false);
+        handlerExists(value, false);
         return this;
     }
 
@@ -84,7 +84,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      * @param value
      * @param isNot 是否为NOT EXISTS操作
      */
-    private void handerExists(String value, boolean isNot) {
+    private void handlerExists(String value, boolean isNot) {
         if (StringUtils.isNotEmpty(value)) {
             StringBuilder inSql = new StringBuilder();
             if (isNot) {
@@ -104,7 +104,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      * @return
      */
     public SqlPlus NOT_EXISTS(String value) {
-        handerExists(value, true);
+        handlerExists(value, true);
         return this;
     }
 
@@ -116,7 +116,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      * @param columns 以逗号分隔的字段名称
      * @param sqlPart SQL部分
      */
-    private void handerNull(String columns, String sqlPart) {
+    private void handlerNull(String columns, String sqlPart) {
         if (StringUtils.isNotEmpty(columns)) {
             String[] cols = columns.split(",");
             for (String col : cols) {

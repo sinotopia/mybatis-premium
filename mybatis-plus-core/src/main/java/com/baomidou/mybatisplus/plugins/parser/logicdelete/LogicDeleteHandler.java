@@ -27,9 +27,27 @@ import net.sf.jsqlparser.expression.Expression;
  */
 public interface LogicDeleteHandler {
 
+    /**
+     * 获取逻辑删除列值
+     *
+     * @param tableName
+     * @return
+     */
     Expression getValue(String tableName);
 
+    /**
+     * 获取逻辑删除列名
+     *
+     * @param tableName
+     * @return
+     */
     String getColumn(String tableName);
 
+    /**
+     * 表过滤
+     *
+     * @param tableName
+     * @return
+     */
     boolean doTableFilter(String tableName);
 }

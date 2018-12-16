@@ -105,7 +105,7 @@ public class AutoSqlInjector implements ISqlInjector {
         }*/
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
-            /**
+            /*
              * 初始化 SQL 解析
              */
             if (this.getGlobalConfig().isSqlParserCache()) {

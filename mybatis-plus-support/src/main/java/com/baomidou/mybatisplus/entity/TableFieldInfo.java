@@ -57,6 +57,7 @@ public class TableFieldInfo {
      * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
      */
     private String el;
+
     /**
      * 属性类型
      */
@@ -108,7 +109,7 @@ public class TableFieldInfo {
          */
         if (StringUtils.isEmpty(tableField.value())
             && globalConfig.isDbColumnUnderline()) {
-             /* 开启字段下划线申明 */
+            /* 开启字段下划线申明 */
             this.related = true;
             this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
         } else {
@@ -120,7 +121,7 @@ public class TableFieldInfo {
         this.el = el;
         /*
          * 优先使用单个字段注解，否则使用全局配置
-		 */
+         */
         if (globalConfig.getFieldStrategy() != tableField.strategy()) {
             this.fieldStrategy = tableField.strategy();
         } else {
@@ -131,7 +132,7 @@ public class TableFieldInfo {
         this.condition = tableField.condition();
         /*
          * 保存当前字段的填充策略
-		 */
+         */
         this.fieldFill = tableField.fill();
     }
 

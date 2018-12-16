@@ -65,12 +65,14 @@ public class TableInfo {
      * 表主键ID 字段名
      */
     private String keyColumn;
+
     /**
      * <p>
      * 表主键ID Sequence
      * </p>
      */
     private KeySequence keySequence;
+
     /**
      * 表字段信息列表
      */
@@ -80,10 +82,12 @@ public class TableInfo {
      * 命名空间
      */
     private String currentNamespace;
+
     /**
      * MybatisConfiguration 标记 (Configuration内存地址值)
      */
     private String configMark;
+    
     /**
      * 是否开启逻辑删除
      */

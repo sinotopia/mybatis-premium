@@ -238,7 +238,7 @@ public interface BaseMapper<T> {
      *
      * @param rowBounds 分页查询条件（可以为 RowBounds.DEFAULT）
      * @param wrapper   实体对象封装操作类
-     * @return List<Map<String, Object>>
+     * @return List<Map   <   String   ,       Object>>
      */
     List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
 

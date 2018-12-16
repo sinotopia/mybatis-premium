@@ -29,6 +29,7 @@ public class SqlInfo {
      * SQL 内容
      */
     private String sql;
+
     /**
      * 是否排序
      */

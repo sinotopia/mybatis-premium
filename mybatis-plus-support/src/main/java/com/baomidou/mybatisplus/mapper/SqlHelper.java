@@ -55,7 +55,7 @@ public class SqlHelper {
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
         return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
     }
-    
+
     /**
      * <p>
      * 获取sqlSession
@@ -74,7 +74,7 @@ public class SqlHelper {
      * 获取Session
      * </p>
      *
-     * @param clazz      实体类
+     * @param clazz 实体类
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {

@@ -54,15 +54,17 @@ import com.baomidou.mybatisplus.mapper.SqlRunner;
  * </p>
  *
  * @author hubin sjy
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 public class TableInfoHelper {
 
     private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
+
     /**
      * 缓存反射类表信息
      */
     private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
+
     /**
      * 默认表主键
      */
@@ -78,17 +80,17 @@ public class TableInfoHelper {
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
         TableInfo tableInfo = tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
-        if(tableInfo!=null){
+        if (tableInfo != null) {
             return tableInfo;
-        }else{
+        } else {
             //尝试获取父类缓存
             Class currentClass = clazz;
-            while (tableInfo==null && Object.class!=currentClass){
+            while (tableInfo == null && Object.class != currentClass) {
                 currentClass = currentClass.getSuperclass();
                 tableInfo = tableInfoCache.get(ClassUtils.getUserClass(currentClass).getName());
             }
-            if(tableInfo!=null){
-                tableInfoCache.put(ClassUtils.getUserClass(clazz).getName(),tableInfo);
+            if (tableInfo != null) {
+                tableInfoCache.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
             }
         }
         return tableInfo;

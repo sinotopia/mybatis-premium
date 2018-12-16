@@ -63,7 +63,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     protected Boolean isWhere;
     /**
-     * 拼接WHERE后应该是AND还是ORnull
+     * 拼接WHERE后应该是AND还是OR null
      */
     protected String AND_OR = "AND";
 
@@ -1460,7 +1460,6 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> notBetween(String column, Object val1, Object val2) {
         return notBetween(true, column, val1, val2);
-
     }
 
     /**
