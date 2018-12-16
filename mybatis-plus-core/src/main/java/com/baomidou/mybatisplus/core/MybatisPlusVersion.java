@@ -13,17 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.api;
+package com.baomidou.mybatisplus.core;
 
 /**
- * <p>
- * REST API 返回结果 , 简化为类 com.baomidou.mybatisplus.extension.api.R
- * </p>
+ * 获取Mybatis-Plus版本
  *
- * @author hubin
- * @since 2018-06-05
+ * @author nieqiurong 2018/11/13.
  */
-@Deprecated
-public class ApiResult<T> extends R<T> {
+public class MybatisPlusVersion {
+
+    private MybatisPlusVersion() {
+    }
+
+    public static String getVersion() {
+        Package pkg = MybatisPlusVersion.class.getPackage();
+        return (pkg != null ? pkg.getImplementationVersion() : null);
+    }
 
 }

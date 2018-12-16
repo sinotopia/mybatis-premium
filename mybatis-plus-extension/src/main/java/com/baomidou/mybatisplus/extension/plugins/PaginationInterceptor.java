@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Setter;
@@ -30,19 +31,19 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
@@ -118,9 +119,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * Physical Page Interceptor for all the queries with parameter {@link RowBounds}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+        StatementHandler statementHandler = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
 
         // SQL 解析
@@ -162,7 +164,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         boolean orderBy = true;
-        if (page.getTotal() == 0) {
+        if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
@@ -170,14 +172,20 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 return invocation.proceed();
             }
         }
+
         String buildSql = concatOrderBy(originalSql, page, orderBy);
-        originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
+        DialectModel model = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
+        Configuration configuration = mappedStatement.getConfiguration();
+        List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
+        Map<String, Object> additionalParameters = (Map<String, Object>) metaObject.getValue("delegate.boundSql.additionalParameters");
+        model.consumers(mappings, configuration, additionalParameters);
+        metaObject.setValue("delegate.boundSql.sql", model.getDialectSql());
+        metaObject.setValue("delegate.boundSql.parameterMappings", mappings);
 
         /*
          * <p> 禁用内存分页 </p>
          * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
          */
-        metaObject.setValue("delegate.boundSql.sql", originalSql);
         metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
         metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
@@ -186,10 +194,11 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 查询总记录条数
      *
-     * @param sql
-     * @param mappedStatement
-     * @param boundSql
-     * @param page
+     * @param sql             count sql
+     * @param mappedStatement MappedStatement
+     * @param boundSql        BoundSql
+     * @param page            IPage
+     * @param connection      Connection
      */
     protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -211,7 +220,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            throw ExceptionUtils.mpe("Error: Method queryTotal execution error.", e);
+            throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql for %s.", e, sql);
         }
     }
 

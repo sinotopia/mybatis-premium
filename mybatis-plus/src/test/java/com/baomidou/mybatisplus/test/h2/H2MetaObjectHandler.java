@@ -46,8 +46,8 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
         System.out.println("testType=" + testType);
         if (testType == null) {
             //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-            this.setFieldValByName("testType1", 3, metaObject);
-            this.setFieldValByName("testType", 3, metaObject);
+            this.setInsertFieldValByName("testType1", 3, metaObject);
+            this.setInsertFieldValByName("testType", 3, metaObject);
         }
     }
 
@@ -57,8 +57,8 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
         System.out.println("update fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setFieldValByName("lastUpdatedDt1", new Timestamp(System.currentTimeMillis()), metaObject);
-        this.setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setUpdateFieldValByName("lastUpdatedDt1", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setUpdateFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
     }
 }
 

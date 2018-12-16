@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -33,12 +36,38 @@ public class IdWorker {
      */
     private static Sequence WORKER = new Sequence();
 
+    /**
+     * 毫秒格式化时间
+     */
+    public static final DateTimeFormatter MILLISECOND = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+
     public static long getId() {
         return WORKER.nextId();
     }
 
     public static String getIdStr() {
         return String.valueOf(WORKER.nextId());
+    }
+
+    /**
+     * <p>
+     * 格式化的毫秒时间
+     * </p>
+     */
+    public static String getMillisecond() {
+        return LocalDateTime.now().format(MILLISECOND);
+    }
+
+    /**
+     * <p>
+     * 时间 ID = Time + ID
+     * </p>
+     * <p>
+     * 例如：可用于商品订单 ID
+     * </p>
+     */
+    public static String getTimeId() {
+        return getMillisecond() + getId();
     }
 
     /**
@@ -55,11 +84,12 @@ public class IdWorker {
 
     /**
      * <p>
-     * 获取去掉"-" UUID
+     * 使用ThreadLocalRandom获取UUID获取更优的效果 去掉"-"
      * </p>
      */
-    public static synchronized String get32UUID() {
-        return UUID.randomUUID().toString().replace(StringPool.DASH, StringPool.EMPTY);
+    public static String get32UUID() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return new UUID(random.nextLong(), random.nextLong()).toString().replace(StringPool.DASH, StringPool.EMPTY);
     }
 
 }

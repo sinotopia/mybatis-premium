@@ -21,8 +21,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -49,7 +52,9 @@ public class GlobalConfig implements Serializable {
     private boolean banner = true;
     /**
      * 是否刷新 mapper
+     * @deprecated since 2018-11-26
      */
+    @Deprecated
     private boolean refresh = false;
     /**
      * 缓存 Sql 解析初始化
@@ -72,8 +77,13 @@ public class GlobalConfig implements Serializable {
      */
     private ISqlInjector sqlInjector;
     /**
+     * Mapper父类
+     */
+    private Class superMapperClass = BaseMapper.class;
+    /**
      * 缓存当前Configuration的SqlSessionFactory
      */
+    @Setter(value = AccessLevel.NONE)
     private SqlSessionFactory sqlSessionFactory;
     /**
      * 缓存已注入CRUD的Mapper信息
@@ -89,11 +99,11 @@ public class GlobalConfig implements Serializable {
      * 标记全局设置 (统一所有入口)
      * </p>
      */
-    public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
+    public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
         if (null != sqlSessionFactory) {
             GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
         }
-        return sqlSessionFactory;
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
     @Data

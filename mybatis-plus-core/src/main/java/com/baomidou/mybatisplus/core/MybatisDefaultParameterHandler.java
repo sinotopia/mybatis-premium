@@ -15,12 +15,20 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
@@ -29,10 +37,14 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -45,10 +57,6 @@ import java.util.*;
  */
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 
-    /**
-     * @see BoundSql
-     */
-    private static final Field ADDITIONAL_PARAMETERS_FIELD = getAdditionalParametersField();
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
@@ -65,28 +73,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 反射获取BoundSql中additionalParameters参数字段
-     *
-     * @return
-     * @see BoundSql
-     */
-    private static Field getAdditionalParametersField() {
-        try {
-            Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
-            additionalParametersField.setAccessible(true);
-            return additionalParametersField;
-        } catch (NoSuchFieldException e) {
-            // ignored, Because it will never happen.
-        }
-        return null;
-    }
-
-    /**
      * <p>
      * 批量（填充主键 ID）
      * </p>
      *
-     * @param ms
+     * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
      * @return
      */
@@ -226,16 +217,9 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         return metaObject.getOriginalObject();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
+    @SuppressWarnings("unchecked")
     public void setParameters(PreparedStatement ps) {
-        // 反射获取动态参数
-        Map<String, Object> additionalParameters = null;
-        try {
-            additionalParameters = (Map<String, Object>) ADDITIONAL_PARAMETERS_FIELD.get(boundSql);
-        } catch (IllegalAccessException e) {
-            // ignored, Because it will never happen.
-        }
         ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
@@ -244,8 +228,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
-                    if (boundSql.hasAdditionalParameter(propertyName)) {
-                        //issue#448 ask first for additional params
+                    if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
                         value = boundSql.getAdditionalParameter(propertyName);
                     } else if (parameterObject == null) {
                         value = null;
@@ -254,10 +237,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     } else {
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
-                        if (value == null && CollectionUtils.isNotEmpty(additionalParameters)) {
-                            // issue #138
-                            value = additionalParameters.get(propertyName);
-                        }
                     }
                     TypeHandler typeHandler = parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();

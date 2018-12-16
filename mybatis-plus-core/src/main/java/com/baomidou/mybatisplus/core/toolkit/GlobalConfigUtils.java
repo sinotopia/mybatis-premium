@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -33,6 +32,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
  * <p>
@@ -137,7 +137,7 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getDbConfig().getIdType();
     }
 
-    public static boolean isDbColumnUnderline(Configuration configuration) {
+    public static boolean isMapUnderscoreToCamelCase(Configuration configuration) {
         return configuration.isMapUnderscoreToCamelCase();
     }
 
@@ -156,9 +156,14 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getMetaObjectHandler();
     }
 
+    public static Class getSuperMapperClass(Configuration configuration) {
+        return getGlobalConfig(configuration).getSuperMapperClass();
+    }
+
     public static boolean isRefresh(Configuration configuration) {
         return getGlobalConfig(configuration).isRefresh();
     }
+
 
     public static Set<String> getMapperRegistryCache(Configuration configuration) {
         return getGlobalConfig(configuration).getMapperRegistryCache();

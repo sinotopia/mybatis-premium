@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.joining;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-@SuppressWarnings("unchecked,serial")
+@SuppressWarnings({"serial", "unchecked"})
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
 
@@ -59,12 +59,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
     protected final This typedThis = (This) this;
+    protected final String paramAlias = null;
     /**
      * 必要度量
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
-    protected String paramAlias = null;
     protected String lastSql = StringPool.EMPTY;
     /**
      * 数据库表映射实体类
@@ -82,7 +82,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public This setEntity(T entity) {
-        Assert.notNull(entity, "entity must not null");
         this.entity = entity;
         this.initEntityClass();
         return typedThis;
@@ -94,8 +93,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         }
     }
 
-    protected void checkEntityClass() {
+    protected Class<T> getCheckEntityClass() {
         Assert.notNull(entityClass, "entityClass must not null,please set entity before use this method!");
+        return entityClass;
     }
 
     @Override
@@ -220,7 +220,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This last(boolean condition, String lastSql) {
-        this.lastSql = StringPool.SPACE + lastSql;
+        if (condition) {
+            this.lastSql = StringPool.SPACE + lastSql;
+        }
         return typedThis;
     }
 
@@ -245,19 +247,19 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This in(boolean condition, R column, Collection<?> value) {
-        if (CollectionUtils.isEmpty(value)) {
+    public This in(boolean condition, R column, Collection<?> coll) {
+        if (CollectionUtils.isEmpty(coll)) {
             return typedThis;
         }
-        return doIt(condition, () -> columnToString(column), IN, inExpression(value));
+        return doIt(condition, () -> columnToString(column), IN, inExpression(coll));
     }
 
     @Override
-    public This notIn(boolean condition, R column, Collection<?> value) {
-        if (CollectionUtils.isEmpty(value)) {
+    public This notIn(boolean condition, R column, Collection<?> coll) {
+        if (CollectionUtils.isEmpty(coll)) {
             return typedThis;
         }
-        return not(condition).in(condition, column, value);
+        return not(condition).in(condition, column, coll);
     }
 
     @Override
@@ -427,6 +429,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return typedThis;
     }
 
+    @SuppressWarnings("all")
     public String getParamAlias() {
         return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
     }
@@ -438,11 +441,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
             return sqlSegment + lastSql;
         }
         if (StringUtils.isNotEmpty(lastSql)) {
-            return "1=1" + lastSql;
+            return lastSql;
         }
         return null;
     }
 
+    @Override
     public MergeSegments getExpression() {
         return expression;
     }
@@ -468,6 +472,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected abstract String columnToString(R column);
 
     @Override
+    @SuppressWarnings("all")
     public This clone() {
         return SerializationUtils.clone(typedThis);
     }

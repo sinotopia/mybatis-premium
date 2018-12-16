@@ -13,7 +13,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -29,6 +28,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -90,7 +90,7 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 缓存表的索引信息
      */
-    private static Map<String, List<IndexInfo>> indexInfoMap = new ConcurrentHashMap<>();
+    private static final Map<String, List<IndexInfo>> indexInfoMap = new ConcurrentHashMap<>();
 
     /**
      * 验证expression对象是不是 or、not等等
@@ -160,7 +160,7 @@ public class IllegalSQLInterceptor implements Interceptor {
         String tableInfo = table.getName();
         //表存在的索引
         String dbName = null;
-        String tableName = null;
+        String tableName;
         String[] tableArray = tableInfo.split("\\.");
         if (tableArray.length == 1) {
             tableName = tableArray[0];
@@ -260,7 +260,7 @@ public class IllegalSQLInterceptor implements Interceptor {
             indexInfos = indexInfoMap.get(key);
         }
         if (indexInfos == null || indexInfos.isEmpty()) {
-            ResultSet rs = null;
+            ResultSet rs;
             try {
                 DatabaseMetaData metadata = conn.getMetaData();
                 rs = metadata.getIndexInfo(dbName, dbName, tableName, false, true);
@@ -287,7 +287,7 @@ public class IllegalSQLInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+        StatementHandler statementHandler = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
         // 如果是insert操作， 或者 @SqlParser(filter = true) 跳过该方法解析 ， 不进行验证
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");

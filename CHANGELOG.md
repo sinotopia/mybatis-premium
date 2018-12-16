@@ -1,6 +1,54 @@
 ﻿# CHANGELOG
 
 
+## [v3.0.6] 2018.11.18
+- 修复entity中2个以上条件并且拼接ODER BY 或 GROUP BY 产生的 WHERE X1 =? AND X2
+- refactor(SerializedLambda.java):重构方法增加反序列化安全性，优化命名
+- 基础Mapper优化支持自定义父类Mapper构造自己需要的注入方法
+- 使用<where><set>代替<trim>
+- 部分优化: 直到抛出异常时才进行字符串 format
+- 优化 IdWorker 生成UUID使用并发性能
+- feat: 动态分页模型、优化分页方言重新修正db2分页语句
+- Assert 支持 i18n 多语言错误提示
+- 支持 total 控制是否 count sql 新增 isSearchCount 方法
+- feat: move spring dependency from core module to extension
+- fix: Junit.assertTrue
+- 强制使用自定义ParameterHandler,去除byId类型限制.
+- 新增选装件的 InsertBatch 通用方法,以及相应测试,以及代码和性能的优化
+- IPage 新增功能,泛型转换
+- 自动填充判断填充值是否为空,为空时跳过填充逻辑
+- batchsize 阈值设 30 修改为 1000 提升效率
+- 修复在极端情况下saveOrUpdate执行错误
+- 移除 MybatisSqlSessionTemplate
+- 优化 xml 热加载
+- 其他优化
+
+
+## [v3.0.5] 2018.10.11
+- 移除 ApiAssert 改为 Assert
+- 移除 ApiResult 改为 R
+- SQL 注入器优化
+- 移除 excludeColumns 方法
+- 修复 last 方法的 condition 入参不生效的问题
+- 修复去除1=1 BUG
+- 移除对 spring-devtools 的支持
+- 修复实体属性都为null时Sql拼接出错问题
+- 缓存Class反射信息,提升效率
+- 继承Model类的实体中,现在无需重写pkVal()方法
+- 解决在设置了config-location的情况下报mpe的bug,以及优化初始化逻辑
+- 修复存在 mapper.xml 情况下逻辑删除失效
+- 调整 关于ServiceImpl中的事务问题 gitee issue/IN8T8
+- 修复 DB2分页方言 github issues/526
+
+
+## [v3.0.4] 2018.09.28
+- 修正全局配置 FieldStrategy 为非默认值
+- 修正批量事务异常问题
+- Api 层 R 类自动处理逻辑失败
+- 修改h2脚本初始化加载,去除测试用例注入.
+- 新增注释其它
+
+
 ## [v3.0.3] 2018.09.17
 - 新增筛选查询字段方法
 - fixed orderBy多入参的bug

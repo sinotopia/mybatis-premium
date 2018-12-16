@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -9,7 +10,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -30,6 +30,7 @@ public class CommonData extends Model<CommonData> {
     private Long id;
     @TableField(el = "testInt, jdbcType=INTEGER")
     private Integer testInt;
+    @TableField(strategy = FieldStrategy.DEFAULT)
     private String testStr;
     @TableField(value = "c_time", fill = FieldFill.INSERT)
     private LocalDateTime createDatetime;
@@ -45,11 +46,4 @@ public class CommonData extends Model<CommonData> {
      */
 //    private Long tenantId;
 
-    /**
-     * 主键值
-     */
-    @Override
-    protected Serializable pkVal() {
-        return id;
-    }
 }

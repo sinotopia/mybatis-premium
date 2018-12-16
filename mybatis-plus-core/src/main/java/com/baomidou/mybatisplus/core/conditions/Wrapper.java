@@ -15,7 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Objects;
+
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -25,7 +33,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin
  * @since 2018-05-25
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("all")
 public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
@@ -52,10 +60,80 @@ public abstract class Wrapper<T> implements ISqlSegment {
     }
 
     /**
-     * 查询条件为空
+     * 获取 MergeSegments
+     */
+    public abstract MergeSegments getExpression();
+
+    /**
+     * 查询条件为空(包含entity)
      */
     public boolean isEmptyOfWhere() {
-        return StringUtils.isEmpty(getSqlSegment()) && null == getEntity();
+        return isEmptyOfNormal() && isEmptyOfEntity();
+    }
+
+    /**
+     * 查询条件不为空(包含entity)
+     */
+    public boolean nonEmptyOfWhere() {
+        return !isEmptyOfWhere();
+    }
+
+    /**
+     * 查询条件为空(不包含entity)
+     */
+    public boolean isEmptyOfNormal() {
+        return CollectionUtils.isEmpty(getExpression().getNormal());
+    }
+
+    /**
+     * 查询条件为空(不包含entity)
+     */
+    public boolean nonEmptyOfNormal() {
+        return !isEmptyOfNormal();
+    }
+
+    /**
+     * 深层实体判断属性
+     *
+     * @return true 不为空
+     */
+    public boolean nonEmptyOfEntity() {
+        T entity = getEntity();
+        if (entity == null) {
+            return false;
+        }
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
+        if (tableInfo == null) {
+            return false;
+        }
+        if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e))) {
+            return true;
+        }
+        return StringUtils.isNotEmpty(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) : false;
+    }
+
+    /**
+     * 根据实体FieldStrategy属性来决定判断逻辑
+     */
+    private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
+        switch (e.getFieldStrategy()) {
+            case NOT_NULL:
+                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+            case IGNORED:
+                return true;
+            case NOT_EMPTY:
+                return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+            default:
+                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+        }
+    }
+
+    /**
+     * 深层实体判断属性
+     *
+     * @return true 为空
+     */
+    public boolean isEmptyOfEntity() {
+        return !nonEmptyOfEntity();
     }
 }
-

@@ -15,29 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.injector.methods.*;
+
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.injector.methods.Delete;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteById;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteByMap;
-import com.baomidou.mybatisplus.core.injector.methods.Insert;
-import com.baomidou.mybatisplus.core.injector.methods.SelectBatchByIds;
-import com.baomidou.mybatisplus.core.injector.methods.SelectById;
-import com.baomidou.mybatisplus.core.injector.methods.SelectByMap;
-import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
-import com.baomidou.mybatisplus.core.injector.methods.SelectList;
-import com.baomidou.mybatisplus.core.injector.methods.SelectMaps;
-import com.baomidou.mybatisplus.core.injector.methods.SelectMapsPage;
-import com.baomidou.mybatisplus.core.injector.methods.SelectObjs;
-import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
-import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
-import com.baomidou.mybatisplus.core.injector.methods.Update;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -49,7 +32,6 @@ import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
  * @since 2018-04-10
  */
 public class DefaultSqlInjector extends AbstractSqlInjector {
-
 
     @Override
     public List<AbstractMethod> getMethodList() {
@@ -71,12 +53,6 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             new SelectObjs(),
             new SelectList(),
             new SelectPage()
-        ).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public void injectSqlRunner(Configuration configuration) {
-        new SqlRunnerInjector().inject(configuration);
+        ).collect(toList());
     }
 }

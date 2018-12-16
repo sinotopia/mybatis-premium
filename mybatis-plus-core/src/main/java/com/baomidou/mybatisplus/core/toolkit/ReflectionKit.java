@@ -15,16 +15,27 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.stream.Stream;
-
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
  * <p>
@@ -37,6 +48,10 @@ import static java.util.stream.Collectors.toMap;
 public class ReflectionKit {
 
     private static final Log logger = LogFactory.getLog(ReflectionKit.class);
+    /**
+     * class field cache
+     */
+    private static final Map<Class, List<Field>> classFieldCache = new ConcurrentHashMap<>();
 
     /**
      * <p>
@@ -81,16 +96,13 @@ public class ReflectionKit {
     public static Object getMethodValue(Class<?> cls, Object entity, String str) {
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
-            if (CollectionUtils.isEmpty(fieldMaps)) {
-                throw ExceptionUtils.mpe(String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
-            }
+            Assert.notEmpty(fieldMaps, "Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str);
             Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
             return method.invoke(entity);
         } catch (NoSuchMethodException e) {
-            throw ExceptionUtils.mpe(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
+            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, cls.getSimpleName());
         } catch (IllegalAccessException e) {
-            throw ExceptionUtils.mpe(String.format("Error: Cannot execute a private method. in %s.  Cause:",
-                cls.getSimpleName()) + e);
+            throw ExceptionUtils.mpe("Error: Cannot execute a private method. in %s.  Cause:", e, cls.getSimpleName());
         } catch (InvocationTargetException e) {
             throw ExceptionUtils.mpe("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
@@ -166,8 +178,29 @@ public class ReflectionKit {
      * @param clazz 反射类
      */
     public static List<Field> getFieldList(Class<?> clazz) {
-        if (null == clazz) {
-            return null;
+        if (Objects.isNull(clazz)) {
+            return Collections.emptyList();
+        }
+        List<Field> fields = classFieldCache.get(clazz);
+        if (CollectionUtils.isEmpty(fields)) {
+            synchronized (classFieldCache) {
+                fields = doGetFieldList(clazz);
+                classFieldCache.put(clazz, fields);
+            }
+        }
+        return fields;
+    }
+
+    /**
+     * <p>
+     * 获取该类的所有属性列表
+     * </p>
+     *
+     * @param clazz 反射类
+     */
+    public static List<Field> doGetFieldList(Class<?> clazz) {
+        if (Object.class.equals(clazz)) {
+            return Collections.emptyList();
         }
         List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
             /* 过滤静态属性 */

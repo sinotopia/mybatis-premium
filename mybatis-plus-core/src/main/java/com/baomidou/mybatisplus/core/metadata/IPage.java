@@ -18,6 +18,9 @@ package com.baomidou.mybatisplus.core.metadata;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * <p>
@@ -70,6 +73,17 @@ public interface IPage<T> extends Serializable {
      * @return true 是 / false 否
      */
     default boolean optimizeCountSql() {
+        return true;
+    }
+
+    /**
+     * <p>
+     * 进行 count 查询 【 默认: true 】
+     * </p>
+     *
+     * @return true 是 / false 否
+     */
+    default boolean isSearchCount() {
         return true;
     }
 
@@ -129,9 +143,6 @@ public interface IPage<T> extends Serializable {
      * <p>
      * 当前满足条件总行数
      * </p>
-     * <p>
-     * 当 total 为 null 或者大于 0 分页插件不在查询总数
-     * </p>
      *
      * @return 总条数
      */
@@ -142,10 +153,9 @@ public interface IPage<T> extends Serializable {
      * 设置当前满足条件总行数
      * </p>
      * <p>
-     * 当 total 为 null 或者大于 0 分页插件不在查询总数
      * </p>
      */
-    IPage<T> setTotal(long total);
+    IPage<T> setTotal(Long total);
 
     /**
      * <p>
@@ -178,4 +188,19 @@ public interface IPage<T> extends Serializable {
      * </p>
      */
     IPage<T> setCurrent(long current);
+
+    /**
+     * <p>
+     * IPage 的泛型转换
+     * </p>
+     *
+     * @param mapper 转换函数
+     * @param <R>    转换后的泛型
+     * @return 转换泛型后的 IPage
+     */
+    @SuppressWarnings("unchecked")
+    default <R> IPage<R> convert(Function<? super T, ? extends R> mapper) {
+        List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
+        return ((IPage<R>) this).setRecords(collect);
+    }
 }

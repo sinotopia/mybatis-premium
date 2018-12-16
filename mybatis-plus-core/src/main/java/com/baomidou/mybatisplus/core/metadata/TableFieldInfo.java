@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -36,42 +36,46 @@ import java.lang.reflect.Field;
  * @since 2016-09-09
  */
 @Getter
-public class TableFieldInfo {
+public class TableFieldInfo implements Constants {
 
     /**
      * 是否有存在字段名与属性名关联
      * true: 表示要进行 as
      */
-    private boolean related;
+    private final boolean related;
+    /**
+     * 字段名
+     */
+    private final String column;
+    /**
+     * 属性名
+     */
+    private final String property;
+    /**
+     * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
+     */
+    private final String el;
+    /**
+     * 属性类型
+     */
+    private final Class<?> propertyType;
+    /**
+     * 属性是否是 CharSequence 类型
+     */
+    private final boolean isCharSequence;
+    /**
+     * 字段策略【 默认，自判断 null 】
+     */
+    private final FieldStrategy fieldStrategy;
+    /**
+     * 标记该字段属于哪个类
+     */
+    private final Class<?> clazz;
     /**
      * 是否进行 select 查询
      * 大字段可设置为 false 不加入 select 查询范围
      */
     private boolean select = true;
-    /**
-     * 字段名
-     */
-    private String column;
-    /**
-     * 属性名
-     */
-    private String property;
-    /**
-     * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
-     */
-    private String el;
-    /**
-     * 属性类型
-     */
-    private Class<?> propertyType;
-    /**
-     * 属性是否是 CharSequence 类型
-     */
-    private boolean isCharSequence;
-    /**
-     * 字段策略【 默认，自判断 null 】
-     */
-    private FieldStrategy fieldStrategy;
     /**
      * 逻辑删除值
      */
@@ -92,10 +96,6 @@ public class TableFieldInfo {
      * 字段填充策略
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
-    /**
-     * 标记该字段属于哪个类
-     */
-    private Class<?> clazz;
     /**
      * 缓存 sql select
      */
@@ -239,14 +239,30 @@ public class TableFieldInfo {
     }
 
     /**
-     * 获取 inset 时候插入值 sql 脚本片段
+     * 获取 insert 时候插入值 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
+     * <li> 不生成 if 标签 </li>
+     *
      * @return sql 脚本片段
      */
-    public String getInsertSqlProperty() {
-        String sqlScript = SqlScriptUtils.safeParam(el) + StringPool.COMMA;
+    public String getInsertSqlProperty(final String prefix) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        return SqlScriptUtils.safeParam(newPrefix + el) + COMMA;
+    }
+
+    /**
+     * 获取 insert 时候插入值 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
+     *
+     * <li> 根据规则会生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getInsertSqlPropertyMaybeIf(final String prefix) {
+        String sqlScript = getInsertSqlProperty(prefix);
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
@@ -254,14 +270,29 @@ public class TableFieldInfo {
     }
 
     /**
-     * 获取 inset 时候字段 sql 脚本片段
+     * 获取 insert 时候字段 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
+     *
+     * <li> 不生成 if 标签 </li>
      *
      * @return sql 脚本片段
      */
     public String getInsertSqlColumn() {
-        String sqlScript = column + StringPool.COMMA;
+        return column + COMMA;
+    }
+
+    /**
+     * 获取 insert 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * <li> 根据规则会生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getInsertSqlColumnMaybeIf() {
+        final String sqlScript = getInsertSqlColumn();
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
@@ -275,15 +306,15 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getSqlSet(final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认: column=
-        String sqlSet = column + StringPool.EQUALS;
+        String sqlSet = column + EQUALS;
         if (StringUtils.isNotEmpty(update)) {
             sqlSet += String.format(update, column);
         } else {
             sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
         }
-        sqlSet += StringPool.COMMA;
+        sqlSet += COMMA;
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
             // 不进行 if 包裹
             return sqlSet;
@@ -298,7 +329,7 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getSqlWhere(final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空

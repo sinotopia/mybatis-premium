@@ -15,27 +15,25 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.List;
-import java.util.function.Predicate;
-
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.List;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -47,7 +45,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class TableInfo {
+public class TableInfo implements Constants {
 
     /**
      * 表主键ID 类型
@@ -126,7 +124,7 @@ public class TableInfo {
      * @return SQL Statement
      */
     public String getSqlStatement(String sqlMethod) {
-        return currentNamespace + StringPool.DOT + sqlMethod;
+        return currentNamespace + DOT + sqlMethod;
     }
 
     public void setConfigMark(Configuration configuration) {
@@ -157,7 +155,7 @@ public class TableInfo {
                 sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
             }
         } else {
-            sqlSelect = StringPool.EMPTY;
+            sqlSelect = EMPTY;
         }
         return sqlSelect;
     }
@@ -184,9 +182,9 @@ public class TableInfo {
     public String chooseSelect(Predicate<TableFieldInfo> predicate) {
         String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
-            .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
+            .map(i -> i.getSqlSelect(dbType)).collect(joining(COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
-            return sqlSelect + StringPool.COMMA + fieldsSqlSelect;
+            return sqlSelect + COMMA + fieldsSqlSelect;
         } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
             return fieldsSqlSelect;
         }
@@ -194,62 +192,98 @@ public class TableInfo {
     }
 
     /**
-     * 获取 inset 时候主键 sql 脚本片段
+     * 获取 insert 时候主键 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlProperty() {
+    public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         if (StringUtils.isNotEmpty(keyProperty)) {
             if (idType == IdType.AUTO) {
-                return StringPool.EMPTY;
+                return EMPTY;
             }
-            return SqlScriptUtils.safeParam(keyProperty) + StringPool.COMMA + StringPool.NEWLINE;
+            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA + (newLine ? NEWLINE : EMPTY);
         }
-        return StringPool.EMPTY;
+        return EMPTY;
     }
 
     /**
-     * 获取 inset 时候主键 sql 脚本片段
+     * 获取 insert 时候主键 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn() {
+    public String getKeyInsertSqlColumn(final boolean newLine) {
         if (StringUtils.isNotEmpty(keyColumn)) {
             if (idType == IdType.AUTO) {
-                return StringPool.EMPTY;
+                return EMPTY;
             }
-            return keyColumn + StringPool.COMMA + StringPool.NEWLINE;
+            return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
         }
-        return StringPool.EMPTY;
+        return EMPTY;
     }
 
 
     /**
-     * 获取所有 inset 时候插入值 sql 脚本片段
+     * 根据 predicate 过滤后获取 insert 时候插入值 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
-     * @return sql 脚本片段
-     */
-    public String getAllInsertSqlProperty() {
-        return getKeyInsertSqlProperty() + fieldList.stream().map(TableFieldInfo::getInsertSqlProperty)
-            .collect(joining(StringPool.NEWLINE));
-    }
-
-    /**
-     * 获取 inset 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <li> 自选部位,不生成 if 标签 </li>
      *
      * @return sql 脚本片段
      */
-    public String getAllInsertSqlColumn() {
-        return getKeyInsertSqlColumn() + fieldList.stream().map(TableFieldInfo::getInsertSqlColumn)
-            .collect(joining(StringPool.NEWLINE));
+    public String getSomeInsertSqlProperty(final String prefix, Predicate<TableFieldInfo> predicate) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        return getKeyInsertSqlProperty(newPrefix, false) + fieldList.stream()
+            .filter(predicate).map(i -> i.getInsertSqlProperty(newPrefix)).collect(joining(EMPTY));
+    }
+
+    /**
+     * 根据 predicate 过滤后获取 insert 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * <li> 自选部位,不生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getSomeInsertSqlColumn(Predicate<TableFieldInfo> predicate) {
+        return getKeyInsertSqlColumn(false) + fieldList.stream().filter(predicate)
+            .map(TableFieldInfo::getInsertSqlColumn).collect(joining(EMPTY));
+    }
+
+
+    /**
+     * 获取所有 insert 时候插入值 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
+     *
+     * <li> 自动选部位,根据规则会生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        return getKeyInsertSqlProperty(newPrefix, true) + fieldList.stream()
+            .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).collect(joining(NEWLINE));
+    }
+
+    /**
+     * 获取 insert 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * <li> 自动选部位,根据规则会生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getAllInsertSqlColumnMaybeIf() {
+        return getKeyInsertSqlColumn(true) + fieldList.stream().map(TableFieldInfo::getInsertSqlColumnMaybeIf)
+            .collect(joining(NEWLINE));
     }
 
     /**
@@ -261,7 +295,7 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
@@ -269,14 +303,14 @@ public class TableInfo {
                 }
                 return true;
             })
-            .map(i -> i.getSqlWhere(newPrefix)).collect(joining(StringPool.NEWLINE));
+            .map(i -> i.getSqlWhere(newPrefix)).collect(joining(NEWLINE));
         if (!withId || StringUtils.isEmpty(keyProperty)) {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;
-        String keySqlScript = keyColumn + StringPool.EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
-        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false) +
-            StringPool.NEWLINE + filedSqlScript;
+        String keySqlScript = keyColumn + EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
+        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false)
+            + NEWLINE + filedSqlScript;
     }
 
     /**
@@ -287,15 +321,14 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         return fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
                     return !(isLogicDelete() && i.isLogicDelete());
                 }
                 return true;
-            })
-            .map(i -> i.getSqlSet(newPrefix)).collect(joining(StringPool.NEWLINE));
+            }).map(i -> i.getSqlSet(newPrefix)).collect(joining(NEWLINE));
     }
 
     /**
@@ -308,15 +341,15 @@ public class TableInfo {
     public String getLogicDeleteSql(boolean startWithAnd, boolean deleteValue) {
         if (logicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
-                .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the logicFiled from table {%s}", tableName)));
+                .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
             String formatStr = field.isCharSequence() ? "'%s'" : "%s";
-            String logicDeleteSql = field.getColumn() + StringPool.EQUALS +
+            String logicDeleteSql = field.getColumn() + EQUALS +
                 String.format(formatStr, deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue());
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
             return logicDeleteSql;
         }
-        return StringPool.EMPTY;
+        return EMPTY;
     }
 }

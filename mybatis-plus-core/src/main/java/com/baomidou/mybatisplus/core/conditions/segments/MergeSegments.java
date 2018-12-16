@@ -35,10 +35,10 @@ import lombok.Getter;
 @SuppressWarnings("serial")
 public class MergeSegments implements ISqlSegment {
 
-    private NormalSegmentList normal = new NormalSegmentList();
-    private GroupBySegmentList groupBy = new GroupBySegmentList();
-    private HavingSegmentList having = new HavingSegmentList();
-    private OrderBySegmentList orderBy = new OrderBySegmentList();
+    private final NormalSegmentList normal = new NormalSegmentList();
+    private final GroupBySegmentList groupBy = new GroupBySegmentList();
+    private final HavingSegmentList having = new HavingSegmentList();
+    private final OrderBySegmentList orderBy = new OrderBySegmentList();
 
     public void add(ISqlSegment... iSqlSegments) {
         List<ISqlSegment> list = Arrays.asList(iSqlSegments);
@@ -58,7 +58,7 @@ public class MergeSegments implements ISqlSegment {
     public String getSqlSegment() {
         if (normal.isEmpty()) {
             if (!groupBy.isEmpty() || !orderBy.isEmpty()) {
-                return "1=1" + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+                return groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
             } else {
                 return StringPool.EMPTY;
             }

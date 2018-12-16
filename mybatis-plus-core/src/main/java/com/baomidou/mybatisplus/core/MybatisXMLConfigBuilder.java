@@ -114,6 +114,11 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         return configuration;
     }
 
+    @Override
+    public MybatisConfiguration getConfiguration() {
+        return (MybatisConfiguration) this.configuration;
+    }
+
     private void parseConfiguration(XNode root) {
         try {
             //issue #117 read properties first
@@ -249,7 +254,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         }
     }
 
-    private void settingsElement(Properties props) throws Exception {
+    private void settingsElement(Properties props) {
         configuration.setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
         configuration.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior.valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
         configuration.setCacheEnabled(booleanValueOf(props.getProperty("cacheEnabled"), true));
@@ -272,7 +277,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
         configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
         @SuppressWarnings("unchecked")
-        Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>)resolveClass(props.getProperty("defaultEnumTypeHandler"));
+        Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>) resolveClass(props.getProperty("defaultEnumTypeHandler"));
         configuration.setDefaultEnumTypeHandler(typeHandler);
         configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
         configuration.setLogPrefix(props.getProperty("logPrefix"));
@@ -343,7 +348,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         throw new BuilderException("Environment declaration requires a DataSourceFactory.");
     }
 
-    private void typeHandlerElement(XNode parent) throws Exception {
+    private void typeHandlerElement(XNode parent) {
         if (parent != null) {
             for (XNode child : parent.getChildren()) {
                 if ("package".equals(child.getName())) {
@@ -436,7 +441,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             throw new BuilderException("No environment specified.");
         } else if (id == null) {
             throw new BuilderException("Environment requires an id attribute.");
-        } else{
+        } else {
             return environment.equals(id);
         }
     }

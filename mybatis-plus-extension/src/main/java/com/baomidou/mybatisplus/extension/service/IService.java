@@ -15,13 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -44,13 +47,13 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入（批量），该方法不适合 Oracle
+     * 插入（批量）
      * </p>
      *
      * @param entityList 实体对象集合
      */
     default boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, 30);
+        return saveBatch(entityList, 1000);
     }
 
     /**
@@ -70,7 +73,9 @@ public interface IService<T> {
      *
      * @param entityList 实体对象集合
      */
-    boolean saveOrUpdateBatch(Collection<T> entityList);
+    default boolean saveOrUpdateBatch(Collection<T> entityList) {
+        return saveOrUpdateBatch(entityList, 1000);
+    }
 
     /**
      * <p>
@@ -145,7 +150,7 @@ public interface IService<T> {
      * @param entityList 实体对象集合
      */
     default boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, 30);
+        return updateBatchById(entityList, 1000);
     }
 
     /**
@@ -230,8 +235,11 @@ public interface IService<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param mapper       转换函数
      */
-    Object getObj(Wrapper<T> queryWrapper);
+    default <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
+        return SqlHelper.getObject(listObjs(queryWrapper, mapper));
+    }
 
     /**
      * <p>
@@ -244,12 +252,34 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 查询总记录数
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default int count() {
+        return count(Wrappers.emptyWrapper());
+    }
+
+    /**
+     * <p>
      * 查询列表
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     List<T> list(Wrapper<T> queryWrapper);
+
+    /**
+     * <p>
+     * 查询所有
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default List<T> list() {
+        return list(Wrappers.emptyWrapper());
+    }
 
     /**
      * <p>
@@ -263,6 +293,18 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 无条件翻页查询
+     * </p>
+     *
+     * @param page 翻页对象
+     * @see Wrappers#emptyWrapper()
+     */
+    default IPage<T> page(IPage<T> page) {
+        return page(page, Wrappers.emptyWrapper());
+    }
+
+    /**
+     * <p>
      * 查询列表
      * </p>
      *
@@ -272,12 +314,55 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 查询所有列表
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default List<Map<String, Object>> listMaps() {
+        return listMaps(Wrappers.emptyWrapper());
+    }
+
+    /**
+     * <p>
+     * 查询全部记录
+     * </p>
+     */
+    default List<Object> listObjs() {
+        return listObjs(Function.identity());
+    }
+
+    /**
+     * <p>
+     * 查询全部记录
+     * </p>
+     *
+     * @param mapper 转换函数
+     */
+    default <V> List<V> listObjs(Function<? super Object, V> mapper) {
+        return listObjs(Wrappers.emptyWrapper(), mapper);
+    }
+
+    /**
+     * <p>
      * 根据 Wrapper 条件，查询全部记录
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    List<Object> listObjs(Wrapper<T> queryWrapper);
+    default List<Object> listObjs(Wrapper<T> queryWrapper) {
+        return listObjs(Wrappers.emptyWrapper(), Function.identity());
+    }
+
+    /**
+     * <p>
+     * 根据 Wrapper 条件，查询全部记录
+     * </p>
+     *
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param mapper       转换函数
+     */
+    <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
 
     /**
      * <p>
@@ -288,4 +373,16 @@ public interface IService<T> {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper);
+
+    /**
+     * <p>
+     * 无条件翻页查询
+     * </p>
+     *
+     * @param page 翻页对象
+     * @see Wrappers#emptyWrapper()
+     */
+    default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
+        return pageMaps(page, Wrappers.emptyWrapper());
+    }
 }

@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 /**
  * <p>
@@ -24,8 +25,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
  * </p>
  *
  * @author hubin
+ * @see Wrappers
  * @since 2018-09-01
  */
+@Deprecated
 public class Condition {
 
     /**
@@ -35,11 +38,21 @@ public class Condition {
      * <p>
      * 示例：Condition.<User>create().eq("id", 1)
      * </p>
+     *
+     * @see Wrappers#query()
      */
+    @Deprecated
     public static <T> QueryWrapper<T> create() {
         return new QueryWrapper<>();
     }
 
+    /**
+     * @param entity
+     * @param <T>
+     * @return
+     * @see Wrappers#query()
+     */
+    @Deprecated
     public static <T> QueryWrapper<T> create(T entity) {
         return new QueryWrapper<>(entity);
     }
@@ -51,11 +64,21 @@ public class Condition {
      * <p>
      * 示例：Condition.<User>lambda().eq(User::getId, 1)
      * </p>
+     *
+     * @see Wrappers#query(Object)
      */
+    @Deprecated
     public static <T> LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>();
     }
 
+    /**
+     * @param entity
+     * @param <T>
+     * @return
+     * @see Wrappers#query(Object)
+     */
+    @Deprecated
     public static <T> LambdaQueryWrapper<T> lambda(T entity) {
         return new LambdaQueryWrapper<>(entity);
     }

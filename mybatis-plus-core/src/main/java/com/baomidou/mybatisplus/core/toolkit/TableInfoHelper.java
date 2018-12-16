@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -32,11 +31,12 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
@@ -89,30 +89,6 @@ public class TableInfoHelper {
             TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
         }
         return tableInfo;
-    }
-
-    /**
-     * <p>
-     * 获取表字段
-     * </p>
-     *
-     * @param clazz          表对应实体类 Class
-     * @param excludeColumns 排除字段
-     * @return 字段信息数组
-     */
-    public static String[] getTableColumns(Class<?> clazz, String... excludeColumns) {
-        Assert.notNull(clazz, "clazz must be not null");
-        TableInfo tableInfo = getTableInfo(clazz);
-        Assert.notNull(tableInfo, "Undiscovered table info . " + clazz.getName());
-
-        // 添加表字段
-        List<String> columns = tableInfo.getFieldList().stream().map(TableFieldInfo::getColumn).collect(toList());
-        if (null != tableInfo.getKeyColumn()) {
-            columns.add(tableInfo.getKeyColumn());
-        }
-        List<String> excludes = Arrays.stream(excludeColumns).filter(Objects::nonNull).collect(toList());
-        // 移除不需要的字段
-        return columns.stream().filter(i -> !excludes.contains(i)).toArray(String[]::new);
     }
 
     /**
@@ -412,8 +388,8 @@ public class TableInfoHelper {
             }
             return true;
         }
-        throw ExceptionUtils.mpe(String.format("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
-            clazz.getName(), field.getName()));
+        throw ExceptionUtils.mpe("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
+            clazz.getName(), field.getName());
     }
 
     /**
@@ -431,13 +407,15 @@ public class TableInfoHelper {
             // 首尾有转义符,手动在注解里设置了转义符,去除掉转义符
             column = column.substring(1, column.length() - 1);
         }
-        if (underCamel && column.contains(StringPool.UNDERSCORE)) {
+        String propertyUpper = property.toUpperCase(Locale.ENGLISH);
+        String columnUpper = column.toUpperCase(Locale.ENGLISH);
+        if (underCamel) {
             // 开启了驼峰并且 column 包含下划线
-            return !property.toUpperCase(Locale.ENGLISH).equals(
-                column.replace(StringPool.UNDERSCORE, StringPool.EMPTY).toUpperCase(Locale.ENGLISH));
+            return !(propertyUpper.equals(columnUpper) ||
+                propertyUpper.equals(columnUpper.replace(StringPool.UNDERSCORE, StringPool.EMPTY)));
         } else {
             // 未开启驼峰,直接判断 property 是否与 column 相同(全大写)
-            return !property.toUpperCase(Locale.ENGLISH).equals(column.toUpperCase(Locale.ENGLISH));
+            return !propertyUpper.equals(columnUpper);
         }
     }
 
@@ -447,8 +425,7 @@ public class TableInfoHelper {
      * </p>
      */
     private static void throwExceptionId(Class<?> clazz) {
-        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in " +
-            clazz.getName());
+        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in %s", clazz.getName());
     }
 
     /**
@@ -468,25 +445,6 @@ public class TableInfoHelper {
                 }).collect(toList());
         }
         return fieldList;
-    }
-
-    /**
-     * 初始化SqlSessionFactory (供Mybatis原生调用)
-     *
-     * @param sqlSessionFactory
-     */
-    public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
-        // SqlRunner
-        SqlHelper.FACTORY = sqlSessionFactory;
-        if (globalConfig == null) {
-            GlobalConfig defaultCache = GlobalConfigUtils.defaults();
-            defaultCache.setSqlSessionFactory(sqlSessionFactory);
-            GlobalConfigUtils.setGlobalConfig(configuration, defaultCache);
-        } else {
-            globalConfig.setSqlSessionFactory(sqlSessionFactory);
-        }
     }
 
     /**

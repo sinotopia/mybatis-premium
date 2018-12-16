@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
@@ -63,12 +65,26 @@ public class StringUtils {
     }
 
     /**
+     * 安全的进行字符串 format
+     *
+     * @param target 目标字符串
+     * @param params format 参数
+     * @return format 后的
+     */
+    public static String format(String target, Object... params) {
+        if (target.contains("%s") && ArrayUtils.isNotEmpty(params)) {
+            return String.format(target, params);
+        }
+        return target;
+    }
+
+    /**
      * <p>
      * Blob 转为 String 格式
      * </p>
      *
      * @param blob Blob 对象
-     * @return
+     * @return 转换后的
      */
     public static String blob2String(Blob blob) {
         if (null != blob) {
@@ -241,27 +257,53 @@ public class StringUtils {
     }
 
     /**
+     * MP 内定义的 SQL 占位符表达式，匹配诸如 {0},{1},{2} ... 的形式
+     */
+    public static Pattern MP_SQL_PLACE_HOLDER = Pattern.compile("[{](?<idx>\\d+)}");
+
+    /**
+     * 替换 SQL 语句中的占位符，例如输入 SELECT * FROM test WHERE id = {0} AND name = {1} 会被替换为
+     * SELECT * FROM test WHERE id = 1 AND name = 'MP'
      * <p>
-     * SQL 参数填充
-     * </p>
+     * 当数组中参数不足时，该方法会抛出错误：数组下标越界{@link ArrayIndexOutOfBoundsException}
      *
      * @param content 填充内容
      * @param args    填充参数
-     * @return
      */
     public static String sqlArgsFill(String content, Object... args) {
-        if (StringUtils.isEmpty(content)) {
-            return null;
-        }
-        if (args != null) {
-            int length = args.length;
-            if (length >= 1) {
-                for (int i = 0; i < length; i++) {
-                    content = content.replace(String.format(PLACE_HOLDER, i), sqlParam(args[i]));
-                }
-            }
+        if (StringUtils.isNotEmpty(content) && ArrayUtils.isNotEmpty(args)) {
+            // 索引不能使用，因为 SQL 中的占位符数字与索引不相同
+            return replace(content, MP_SQL_PLACE_HOLDER, (m, i) -> sqlParam(args[Integer.parseInt(m.group("idx"))])).toString();
         }
         return content;
+    }
+
+    /**
+     * 根据指定的表达式替换字符串中指定格式的部分
+     * <p>
+     * BiIntFunction 中的 第二个 参数将传递 参数在字符串中的索引
+     *
+     * @param src      源字符串
+     * @param ptn      需要替换部分的正则表达式
+     * @param replacer 替换处理器
+     * @return 返回字符串构建起
+     */
+    public static StringBuilder replace(CharSequence src, Pattern ptn, BiIntFunction<Matcher, CharSequence> replacer) {
+        int idx = 0, last = 0, len = src.length();
+        Matcher m = ptn.matcher(src);
+        StringBuilder sb = new StringBuilder();
+
+        // 扫描一次字符串
+        while (m.find()) {
+            sb.append(src, last, m.start()).append(replacer.apply(m, idx++));
+            last = m.end();
+        }
+        // 如果表达式没有匹配或者匹配未到末尾，该判断保证字符串完整性
+        if (last < len) {
+            sb.append(src, last, len);
+        }
+
+        return sb;
     }
 
     /**
@@ -745,8 +787,7 @@ public class StringUtils {
         StringBuilder buf = new StringBuilder();
         char previousChar = ' ';
         char[] chars = input.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar)) && (Character.isUpperCase(c));
             boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
 

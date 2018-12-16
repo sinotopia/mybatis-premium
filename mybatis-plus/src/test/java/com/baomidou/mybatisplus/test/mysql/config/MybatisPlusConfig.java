@@ -1,31 +1,30 @@
 package com.baomidou.mybatisplus.test.mysql.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.type.JdbcType;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
-
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -76,6 +75,8 @@ public class MybatisPlusConfig {
             public List<AbstractMethod> getMethodList() {
                 List<AbstractMethod> methodList = super.getMethodList();
                 methodList.add(new LogicDeleteByIdWithFill());
+                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
+                    || t.isLogicDelete() || t.getProperty().equals("version"))));
                 return methodList;
             }
         };

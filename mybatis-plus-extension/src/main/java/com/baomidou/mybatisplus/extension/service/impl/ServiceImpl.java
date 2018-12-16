@@ -21,8 +21,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -94,6 +95,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
         return retBool(baseMapper.insert(entity));
@@ -109,9 +111,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
-        int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+            int i = 0;
             for (T anEntityList : entityList) {
                 batchSqlSession.insert(sqlStatement, anEntityList);
                 if (i >= 1 && i % batchSize == 0) {
@@ -132,101 +134,84 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
         if (null != entity) {
             Class<?> cls = entity.getClass();
             TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-            if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-                Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-                if (StringUtils.checkValNull(idVal)) {
-                    return save(entity);
-                } else {
-                    /*
-                     * 更新成功直接返回，失败执行插入逻辑
-                     */
-                    return updateById(entity) || save(entity);
-                }
-            } else {
-                throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
-            }
+            Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+            String keyProperty = tableInfo.getKeyProperty();
+            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+            Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
+            return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
         }
         return false;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, 30);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
-        }
-        Class<?> cls = null;
-        TableInfo tableInfo = null;
-        int i = 0;
-        try(SqlSession batchSqlSession = sqlSessionBatch()){
-            for (T anEntityList : entityList) {
-                if (i == 0) {
-                    cls = anEntityList.getClass();
-                    tableInfo = TableInfoHelper.getTableInfo(cls);
-                }
-                if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-                    Object idVal = ReflectionKit.getMethodValue(cls, anEntityList, tableInfo.getKeyProperty());
-                    if (StringUtils.checkValNull(idVal)) {
-                        String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-                        batchSqlSession.insert(sqlStatement, anEntityList);
-                    } else {
-                        String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-                        MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                        param.put(Constants.ENTITY, anEntityList);
-                        batchSqlSession.update(sqlStatement, param);
-                        //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
-                    }
-                    if (i >= 1 && i % batchSize == 0) {
-                        batchSqlSession.flushStatements();
-                    }
-                    i++;
+        Assert.notEmpty(entityList, "error: entityList must not be empty");
+        Class<?> cls = currentModelClass();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+        String keyProperty = tableInfo.getKeyProperty();
+        Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+            int i = 0;
+            for (T entity : entityList) {
+                Object idVal = ReflectionKit.getMethodValue(cls, entity, keyProperty);
+                if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
+                    batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
                 } else {
-                    throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
+                    MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                    param.put(Constants.ENTITY, entity);
+                    batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 }
+                //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
+                if (i >= 1 && i % batchSize == 0) {
+                    batchSqlSession.flushStatements();
+                }
+                i++;
             }
+            batchSqlSession.flushStatements();
         }
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
         return SqlHelper.delBool(baseMapper.deleteById(id));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
-        if (ObjectUtils.isEmpty(columnMap)) {
-            throw ExceptionUtils.mpe("removeByMap columnMap is empty.");
-        }
+        Assert.notEmpty(columnMap, "error: columnMap must not be empty");
         return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<T> wrapper) {
         return SqlHelper.delBool(baseMapper.delete(wrapper));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
         return retBool(baseMapper.updateById(entity));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> updateWrapper) {
         return retBool(baseMapper.update(entity, updateWrapper));
@@ -235,12 +220,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
-        }
-        int i = 0;
+        Assert.notEmpty(entityList, "error: entityList must not be empty");
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+            int i = 0;
             for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, anEntityList);
@@ -284,11 +267,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public Object getObj(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(baseMapper.selectObjs(queryWrapper));
-    }
-
-    @Override
     public int count(Wrapper<T> queryWrapper) {
         return SqlHelper.retCount(baseMapper.selectCount(queryWrapper));
     }
@@ -309,8 +287,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public List<Object> listObjs(Wrapper<T> queryWrapper) {
-        return baseMapper.selectObjs(queryWrapper).stream().filter(Objects::nonNull).collect(Collectors.toList());
+    public <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
+        return baseMapper.selectObjs(queryWrapper).stream().filter(Objects::nonNull).map(mapper).collect(Collectors.toList());
     }
 
     @Override
