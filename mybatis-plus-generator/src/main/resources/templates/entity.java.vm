@@ -44,7 +44,9 @@ public class ${entity} extends Model<${entity}> {
 public class ${entity} implements Serializable {
 #end
 
-    private static final long serialVersionUID = 1L;
+#if(${entitySerialVersionUID})
+    private static final long serialVersionUID=1L;
+#end
 ## ----------  BEGIN 字段循环遍历  ----------
 #foreach($field in ${table.fields})
 

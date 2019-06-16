@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 
 /**
- * <p>
  * SQL 解析工具类
- * </p>
  *
  * @author hubin
  * @since 2018-07-22
@@ -31,21 +29,17 @@ public class SqlParserUtils {
     private static ISqlParser COUNT_SQL_PARSER = null;
 
     /**
-     * <p>
      * 获取 COUNT 原生 SQL 包装
-     * </p>
      *
-     * @param originalSql
-     * @return
+     * @param originalSql ignore
+     * @return ignore
      */
     public static String getOriginalCountSql(String originalSql) {
         return String.format("SELECT COUNT(1) FROM ( %s ) TOTAL", originalSql);
     }
 
     /**
-     * <p>
      * 获取CountOptimize
-     * </p>
      *
      * @param optimizeCountSql 是否优化 Count SQL
      * @param sqlParser        Count SQL 解析类

@@ -1,10 +1,26 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.autoconfigure;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.stream.Stream;
-
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.ibatis.session.ExecutorType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -12,9 +28,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * Configuration properties for MyBatis.
@@ -22,7 +39,9 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  * @author Eddú Meléndez
  * @author Kazuki Shimizu
  */
-@ConfigurationProperties(prefix = "mybatis-plus")
+@Data
+@Accessors(chain = true)
+@ConfigurationProperties(prefix = Constants.MYBATIS_PLUS)
 public class MybatisPlusProperties {
 
     private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
@@ -34,8 +53,10 @@ public class MybatisPlusProperties {
 
     /**
      * Locations of MyBatis mapper files.
+     *
+     * @since 3.1.2 add default value
      */
-    private String[] mapperLocations;
+    private String[] mapperLocations = new String[]{"classpath*:/mapper/**/*.xml"};
 
     /**
      * Packages to search type aliases. (Package delimiters are ",; \t\n")
@@ -52,11 +73,6 @@ public class MybatisPlusProperties {
      * Packages to search for type handlers. (Package delimiters are ",; \t\n")
      */
     private String typeHandlersPackage;
-
-    /**
-     * TODO 枚举包
-     */
-    private String typeEnumsPackage;
 
     /**
      * Indicates whether perform presence check of the MyBatis xml config file.
@@ -76,121 +92,22 @@ public class MybatisPlusProperties {
     /**
      * A Configuration object for customize default settings. If {@link #configLocation}
      * is specified, this property is not used.
+     * TODO 使用 MybatisConfiguration
      */
     @NestedConfigurationProperty
     private MybatisConfiguration configuration;
 
     /**
-     * TODO 全局枚举
+     * TODO 枚举包扫描
+     */
+    private String typeEnumsPackage;
+
+    /**
+     * TODO 全局配置
      */
     @NestedConfigurationProperty
     private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
-    /**
-     * @since 1.1.0
-     */
-    public String getConfigLocation() {
-        return this.configLocation;
-    }
-
-    /**
-     * @since 1.1.0
-     */
-    public void setConfigLocation(String configLocation) {
-        this.configLocation = configLocation;
-    }
-
-    public String[] getMapperLocations() {
-        return this.mapperLocations;
-    }
-
-    public void setMapperLocations(String[] mapperLocations) {
-        this.mapperLocations = mapperLocations;
-    }
-
-    public String getTypeHandlersPackage() {
-        return this.typeHandlersPackage;
-    }
-
-    public void setTypeHandlersPackage(String typeHandlersPackage) {
-        this.typeHandlersPackage = typeHandlersPackage;
-    }
-
-    public String getTypeEnumsPackage() {
-        return typeEnumsPackage;
-    }
-
-    public void setTypeEnumsPackage(String typeEnumsPackage) {
-        this.typeEnumsPackage = typeEnumsPackage;
-    }
-
-    public String getTypeAliasesPackage() {
-        return this.typeAliasesPackage;
-    }
-
-    public void setTypeAliasesPackage(String typeAliasesPackage) {
-        this.typeAliasesPackage = typeAliasesPackage;
-    }
-
-    /**
-     * @since 1.3.3
-     */
-    public Class<?> getTypeAliasesSuperType() {
-        return typeAliasesSuperType;
-    }
-
-    /**
-     * @since 1.3.3
-     */
-    public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
-        this.typeAliasesSuperType = typeAliasesSuperType;
-    }
-
-    public boolean isCheckConfigLocation() {
-        return this.checkConfigLocation;
-    }
-
-    public void setCheckConfigLocation(boolean checkConfigLocation) {
-        this.checkConfigLocation = checkConfigLocation;
-    }
-
-    public ExecutorType getExecutorType() {
-        return this.executorType;
-    }
-
-    public void setExecutorType(ExecutorType executorType) {
-        this.executorType = executorType;
-    }
-
-    /**
-     * @since 1.2.0
-     */
-    public Properties getConfigurationProperties() {
-        return configurationProperties;
-    }
-
-    /**
-     * @since 1.2.0
-     */
-    public void setConfigurationProperties(Properties configurationProperties) {
-        this.configurationProperties = configurationProperties;
-    }
-
-    public MybatisConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(MybatisConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public GlobalConfig getGlobalConfig() {
-        return globalConfig;
-    }
-
-    public void setGlobalConfig(GlobalConfig globalConfig) {
-        this.globalConfig = globalConfig;
-    }
 
     public Resource[] resolveMapperLocations() {
         return Stream.of(Optional.ofNullable(this.mapperLocations).orElse(new String[0]))
@@ -205,5 +122,4 @@ public class MybatisPlusProperties {
             return new Resource[0];
         }
     }
-
 }

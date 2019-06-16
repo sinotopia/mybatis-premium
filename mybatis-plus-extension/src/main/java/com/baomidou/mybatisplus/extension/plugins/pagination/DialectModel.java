@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import java.util.List;
@@ -68,11 +83,8 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>
-     * 带下标的
-     * <p>
-     * mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法
-     * </p>
+     * <p>带下标的</p>
+     * <p>mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法</p>
      *
      * @return this
      */
@@ -91,8 +103,7 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>
-     * 不带下标的
+     * <p>不带下标的</p>
      *
      * @return this
      */
@@ -108,8 +119,7 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>
-     * 不带下标的,两个值都有
+     * <p>不带下标的,两个值都有</p>
      *
      * @return this
      */

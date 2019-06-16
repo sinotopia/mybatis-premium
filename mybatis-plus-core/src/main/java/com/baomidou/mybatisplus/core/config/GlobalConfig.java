@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -21,8 +21,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -34,9 +33,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * <p>
  * Mybatis 全局缓存
- * </p>
  *
  * @author Caratacus
  * @since 2016-12-06
@@ -51,14 +48,11 @@ public class GlobalConfig implements Serializable {
      */
     private boolean banner = true;
     /**
-     * 是否刷新 mapper
-     * @deprecated since 2018-11-26
+     * 缓存 Sql 解析初始化
+     *
+     * @deprecated 3.1.1 不再需要这个属性, 现在是全局开启状态
      */
     @Deprecated
-    private boolean refresh = false;
-    /**
-     * 缓存 Sql 解析初始化
-     */
     private boolean sqlParserCache = false;
     /**
      * 机器 ID 部分
@@ -68,6 +62,10 @@ public class GlobalConfig implements Serializable {
      * 数据标识 ID 部分
      */
     private Long datacenterId;
+    /**
+     * 是否初始化 SqlRunner
+     */
+    private boolean enableSqlRunner = false;
     /**
      * 数据库相关配置
      */
@@ -79,7 +77,7 @@ public class GlobalConfig implements Serializable {
     /**
      * Mapper父类
      */
-    private Class superMapperClass = BaseMapper.class;
+    private Class<?> superMapperClass = Mapper.class;
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */
@@ -95,14 +93,9 @@ public class GlobalConfig implements Serializable {
     private MetaObjectHandler metaObjectHandler;
 
     /**
-     * <p>
      * 标记全局设置 (统一所有入口)
-     * </p>
      */
     public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
-        if (null != sqlSessionFactory) {
-            GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
-        }
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
@@ -111,7 +104,10 @@ public class GlobalConfig implements Serializable {
 
         /**
          * 数据库类型
+         *
+         * @deprecated 不再需要, mp不应该也不需要关心数据库类型
          */
+        @Deprecated
         private DbType dbType = DbType.OTHER;
         /**
          * 主键类型（默认 ID_WORKER）
@@ -122,19 +118,36 @@ public class GlobalConfig implements Serializable {
          */
         private String tablePrefix;
         /**
+         * schema
+         *
+         * @since 3.1.1
+         */
+        private String schema;
+        /**
+         * 字段 format
+         * <li> 例: `%s` </li>
+         * <p> 对主键无效 </p>
+         *
+         * @since 3.1.1
+         */
+        private String columnFormat;
+        /**
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */
         private boolean tableUnderline = true;
         /**
          * String 类型字段 LIKE
+         *
+         * @deprecated 3.1.1 后续将删除这个属性
          */
+        @Deprecated
         private boolean columnLike = false;
         /**
          * 大写命名
          */
         private boolean capitalMode = false;
         /**
-         * 表关键词 key 生成器
+         * 表主键生成器
          */
         private IKeyGenerator keyGenerator;
         /**
@@ -147,7 +160,29 @@ public class GlobalConfig implements Serializable {
         private String logicNotDeleteValue = "0";
         /**
          * 字段验证策略
+         *
+         * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #selectStrategy}
          */
+        @Deprecated
         private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+
+        /**
+         * 字段验证策略之 insert
+         * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
+         * 没配则按 {@link #fieldStrategy} 为准
+         */
+        private FieldStrategy insertStrategy;
+        /**
+         * 字段验证策略之 update
+         * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
+         * 没配则按 {@link #fieldStrategy} 为准
+         */
+        private FieldStrategy updateStrategy;
+        /**
+         * 字段验证策略之 select
+         * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
+         * 没配则按 {@link #fieldStrategy} 为准
+         */
+        private FieldStrategy selectStrategy;
     }
 }

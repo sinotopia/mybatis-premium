@@ -1,12 +1,11 @@
-package com.baomidou.mybatisplus.test.h2;
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -14,6 +13,7 @@ package com.baomidou.mybatisplus.test.h2;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.baomidou.mybatisplus.test.h2;
 
 import java.sql.Timestamp;
 
@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 
 
 /**
- * <p>
  * 测试，自定义元对象字段填充控制器，实现公共字段自动写入
- * </p>
  *
  * @author hubin
  * @since 2017-06-25

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,22 +15,18 @@
  */
 package com.baomidou.mybatisplus.extension;
 
-import java.util.Map;
-
+import com.baomidou.mybatisplus.extension.handlers.MybatisMapWrapper;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
-import com.baomidou.mybatisplus.extension.handlers.MybatisMapWrapper;
+import java.util.Map;
 
 /**
- * <p>
  * 开启返回map结果集的下划线转驼峰
- * </p>
- * <p>
- * //使用注册 Map 下划线转驼峰
- * configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
- * </p>
+ *
+ * <p> Map 的 key 下划线转驼峰 </p>
+ * <p>configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());</p>
  *
  * @author yuxiaobin
  * @since 2017-12-19
@@ -42,8 +38,9 @@ public class MybatisMapWrapperFactory implements ObjectWrapperFactory {
         return object instanceof Map;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ObjectWrapper getWrapperFor(MetaObject metaObject, Object object) {
-        return new MybatisMapWrapper(metaObject, (Map) object);
+        return new MybatisMapWrapper(metaObject, (Map<String, Object>) object);
     }
 }

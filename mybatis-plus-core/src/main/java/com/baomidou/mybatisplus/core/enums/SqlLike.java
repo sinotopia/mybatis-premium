@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -16,56 +16,22 @@
 package com.baomidou.mybatisplus.core.enums;
 
 /**
- * <p>
  * SQL like 枚举
- * </p>
  *
  * @author Caratacus
  * @since 2016-12-4
  */
 public enum SqlLike {
-
     /**
-     * LEFT
+     * %值
      */
-    LEFT("left", "左边%"),
-
+    LEFT,
     /**
-     * RIGHT
+     * 值%
      */
-    RIGHT("right", "右边%"),
-
+    RIGHT,
     /**
-     * CUSTOM
+     * %值%
      */
-    CUSTOM("custom", "定制"),
-
-    /**
-     * DEFAULT
-     */
-    DEFAULT("default", "两边%");
-
-    /**
-     * 主键
-     */
-    private final String type;
-
-    /**
-     * 描述
-     */
-    private final String desc;
-
-    SqlLike(final String type, final String desc) {
-        this.type = type;
-        this.desc = desc;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
+    DEFAULT
 }

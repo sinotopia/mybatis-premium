@@ -1,25 +1,23 @@
 /*
- * Copyright 2009-2015 the original author or authors.
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.override.PageMapperProxyFactory;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.Collection;
@@ -28,29 +26,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>
  * 继承至MapperRegistry
- * </p>
  *
  * @author Caratacus hubin
  * @since 2017-04-19
  */
 public class MybatisMapperRegistry extends MapperRegistry {
 
-    private final Map<Class<?>, PageMapperProxyFactory<?>> knownMappers = new HashMap<>();
-    private final Configuration config;
+    private final Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = new HashMap<>();
+    private final MybatisConfiguration config;
 
-    public MybatisMapperRegistry(Configuration config) {
+    public MybatisMapperRegistry(MybatisConfiguration config) {
         super(config);
         this.config = config;
-        // 注入SqlRunner
-        GlobalConfigUtils.getSqlInjector(config).injectSqlRunner(config);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        final PageMapperProxyFactory<T> mapperProxyFactory = (PageMapperProxyFactory<T>) knownMappers.get(type);
+        // TODO 这里换成 MybatisMapperProxyFactory 而不是 MapperProxyFactory
+        final MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
             throw new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry.");
         }
@@ -72,16 +67,17 @@ public class MybatisMapperRegistry extends MapperRegistry {
             if (hasMapper(type)) {
                 // TODO 如果之前注入 直接返回
                 return;
-                // throw new BindingException("Type " + type +
-                // " is already known to the MybatisPlusMapperRegistry.");
+                // TODO 这里就不抛异常了
+//                throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
             }
             boolean loadCompleted = false;
             try {
-                knownMappers.put(type, new PageMapperProxyFactory<>(type));
+                // TODO 这里也换成 MybatisMapperProxyFactory 而不是 MapperProxyFactory
+                knownMappers.put(type, new MybatisMapperProxyFactory<>(type));
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
-                // TODO 自定义无 XML 注入
+                // TODO 这里也换成 MybatisMapperAnnotationBuilder 而不是 MapperAnnotationBuilder
                 MybatisMapperAnnotationBuilder parser = new MybatisMapperAnnotationBuilder(config, type);
                 parser.parse();
                 loadCompleted = true;
@@ -94,7 +90,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
     }
 
     /**
-     * @since 3.2.2
+     * 使用自己的 knownMappers
      */
     @Override
     public Collection<Class<?>> getMappers() {

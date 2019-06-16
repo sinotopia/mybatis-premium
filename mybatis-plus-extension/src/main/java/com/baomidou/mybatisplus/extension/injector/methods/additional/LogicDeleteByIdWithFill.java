@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -17,10 +17,10 @@ package com.baomidou.mybatisplus.extension.injector.methods.additional;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -30,19 +30,19 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
- * <p>
  * 根据 id 逻辑删除数据,并带字段填充功能
- * 注意入参是 entity !!! ,如果字段没有自动填充,就只是单纯的逻辑删除
- * </p>
+ * <p>注意入参是 entity !!! ,如果字段没有自动填充,就只是单纯的逻辑删除</p>
  * <p>
  * 自己的通用 mapper 如下使用:
+ * <pre>
  * int deleteByIdWithFill(T entity);
+ * </pre>
  * </p>
  *
  * @author miemie
  * @since 2018-11-09
  */
-public class LogicDeleteByIdWithFill extends AbstractLogicMethod {
+public class LogicDeleteByIdWithFill extends AbstractMethod {
 
     /**
      * mapper 对应的方法名

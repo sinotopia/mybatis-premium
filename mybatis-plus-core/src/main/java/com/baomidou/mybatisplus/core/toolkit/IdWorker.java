@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -21,10 +21,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * <p>
- * 高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。 <br>
- * 优化开源项目 http://git.oschina.net/yu120/sequence
- * </p>
+ * 高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。
+ * <p>优化开源项目 https://gitee.com/yu120/sequence</p>
  *
  * @author hubin
  * @since 2016-08-01
@@ -50,30 +48,22 @@ public class IdWorker {
     }
 
     /**
-     * <p>
      * 格式化的毫秒时间
-     * </p>
      */
     public static String getMillisecond() {
         return LocalDateTime.now().format(MILLISECOND);
     }
 
     /**
-     * <p>
      * 时间 ID = Time + ID
-     * </p>
-     * <p>
-     * 例如：可用于商品订单 ID
-     * </p>
+     * <p>例如：可用于商品订单 ID</p>
      */
     public static String getTimeId() {
         return getMillisecond() + getId();
     }
 
     /**
-     * <p>
      * 有参构造器
-     * </p>
      *
      * @param workerId     工作机器 ID
      * @param datacenterId 序列号
@@ -83,9 +73,7 @@ public class IdWorker {
     }
 
     /**
-     * <p>
      * 使用ThreadLocalRandom获取UUID获取更优的效果 去掉"-"
-     * </p>
      */
     public static String get32UUID() {
         ThreadLocalRandom random = ThreadLocalRandom.current();

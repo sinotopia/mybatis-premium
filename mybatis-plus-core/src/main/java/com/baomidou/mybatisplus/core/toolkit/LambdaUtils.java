@@ -1,27 +1,26 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,33 +29,34 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.Locale.ENGLISH;
 
 /**
- * <p>
  * Lambda 解析工具类
- * </p>
  *
- * @author HCL
+ * @author HCL, MieMie
  * @since 2018-05-10
  */
 public final class LambdaUtils {
 
-    private static final Map<String, Map<String, String>> LAMBDA_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 字段映射
+     */
+    private static final Map<Class<?>, Map<String, ColumnCache>> LAMBDA_MAP = new ConcurrentHashMap<>();
 
     /**
      * SerializedLambda 反序列化缓存
      */
-    private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * <p>
-     * 解析 lambda 表达式
-     * </p>
+     * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction)} 中的方法，在此基础上加了缓存。
+     * 该缓存可能会在任意不定的时间被清除
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
+     * @see SerializedLambda#resolve(SFunction)
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
-        Class clazz = func.getClass();
+        Class<?> clazz = func.getClass();
         return Optional.ofNullable(FUNC_CACHE.get(clazz))
             .map(WeakReference::get)
             .orElseGet(() -> {
@@ -67,69 +67,51 @@ public final class LambdaUtils {
     }
 
     /**
-     * <p>
-     * 缓存实体类名与表字段映射关系
-     * </p>
+     * 格式化 key 将传入的 key 变更为大写格式
      *
-     * @param clazz     实体
-     * @param tableInfo 表信息
+     * <pre>
+     *     Assert.assertEquals("USERID", formatKey("userId"))
+     * </pre>
+     *
+     * @param key key
+     * @return 大写的 key
      */
-    public static void createCache(Class clazz, TableInfo tableInfo) {
-        LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo, clazz));
+    private static String formatKey(String key) {
+        return key.toUpperCase(ENGLISH);
     }
 
     /**
-     * 保存缓存信息
+     * 获取 clazz 中某字段对应的列信息
      *
-     * @param className 类名
-     * @param property  属性
-     * @param sqlSelect 字段搜索
+     * @param clazz     class 类
+     * @param fieldName 字段名称
+     * @return 如果存在，返回字段信息；否则返回 null
      */
-    private static void saveCache(String className, String property, String sqlSelect) {
-        Map<String, String> cacheMap = LAMBDA_CACHE.getOrDefault(className, new HashMap<>());
-        cacheMap.put(property, sqlSelect);
-        LAMBDA_CACHE.put(className, cacheMap);
-    }
-
-    /**
-     * <p>
-     * 缓存实体字段 MAP 信息
-     * </p>
-     *
-     * @param tableInfo 表信息
-     * @return 缓存 map
-     */
-    private static Map<String, String> createLambdaMap(TableInfo tableInfo, Class clazz) {
-        Map<String, String> map = new HashMap<>();
-        String keyProperty = tableInfo.getKeyProperty();
-        if (StringUtils.isNotEmpty(keyProperty)) {
-            keyProperty = keyProperty.toUpperCase(ENGLISH);
-            String keyColumn = tableInfo.getKeyColumn();
-            if (tableInfo.getClazz() != clazz) {
-                saveCache(tableInfo.getClazz().getName(), keyProperty, keyColumn);
-            }
-            map.put(keyProperty, keyColumn);
-        }
-        tableInfo.getFieldList().forEach(i -> {
-            String property = i.getProperty().toUpperCase(ENGLISH);
-            String column = i.getColumn();
-            if (i.getClazz() != clazz) {
-                saveCache(i.getClazz().getName(), property, column);
-            }
-            map.put(property, column);
+    public static ColumnCache getColumnOfProperty(Class<?> clazz, String fieldName) {
+        Map<String, ColumnCache> map = LAMBDA_MAP.computeIfAbsent(clazz, c -> {
+            TableInfo ti = TableInfoHelper.getTableInfo(c);
+            return null == ti ? null : createColumnCacheMap(ti);
         });
-        return map;
+        return null == map ? null : map.get(formatKey(fieldName));
     }
 
     /**
-     * <p>
-     * 获取实体对应字段 MAP
-     * </p>
+     * 缓存实体字段 MAP 信息
      *
-     * @param entityClassName 实体类名
+     * @param info 表信息
      * @return 缓存 map
      */
-    public static Map<String, String> getColumnMap(String entityClassName) {
-        return LAMBDA_CACHE.getOrDefault(entityClassName, Collections.emptyMap());
+    private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
+        Map<String, ColumnCache> map = new HashMap<>(info.getFieldList().size() + 1);
+
+        String kp = info.getKeyProperty();
+        if (null != kp) {
+            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+        }
+
+        info.getFieldList().forEach(i ->
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
+        );
+        return map;
     }
 }

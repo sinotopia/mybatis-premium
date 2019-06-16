@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,14 +15,12 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import java.nio.charset.Charset;
-
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
+import java.nio.charset.StandardCharsets;
+
 /**
- * <p>
  * 定义常量
- * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016-08-31
@@ -46,7 +44,7 @@ public interface ConstVal {
     String CONTROLLER_PATH = "controller_path";
 
     String JAVA_TMPDIR = "java.io.tmpdir";
-    String UTF8 = Charset.forName("UTF-8").name();
+    String UTF8 = StandardCharsets.UTF_8.name();
     String UNDERLINE = "_";
 
     String JAVA_SUFFIX = StringPool.DOT_JAVA;

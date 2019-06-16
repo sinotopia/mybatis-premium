@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.test.generator;
 
 import java.util.ArrayList;
@@ -21,9 +36,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 /**
- * <p>
  * SQLServerGenerator
- * </p>
  *
  * @author nieqiurong
  * @since 2016/12/25
@@ -75,7 +88,7 @@ public class SQLServerGenerator extends GeneratorTest {
         StrategyConfig strategy = new StrategyConfig();
         // strategy.setCapitalMode(true);// 全局大写命名
         // strategy.setDbColumnUnderline(true);//全局下划线命名
-        strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
+        strategy.setTablePrefix("bmd_", "mp_");// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         // strategy.setInclude(new String[] { "user" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,18 +15,12 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
- * <p>
  * 数据库表相关
- * </p>
  *
- * @author hubin
+ * @author hubin, hanchunlin
  * @since 2016-01-23
  */
 @Documented
@@ -35,17 +29,33 @@ import java.lang.annotation.Target;
 public @interface TableName {
 
     /**
-     * <p>
      * 实体对应的表名
-     * </p>
      */
     String value() default "";
 
     /**
-     * <p>
+     * schema
+     *
+     * @since 3.1.1
+     */
+    String schema() default "";
+
+    /**
+     * 是否保持使用全局的 tablePrefix 的值
+     * <p> 只生效于 既设置了全局的 tablePrefix 也设置了上面 {@link #value()} 的值 </p>
+     * <li> 如果是 false , 全局的 tablePrefix 不生效 </li>
+     *
+     * @since 3.1.1
+     */
+    boolean keepGlobalPrefix() default false;
+
+    /**
      * 实体映射结果集
-     * </p>
      */
     String resultMap() default "";
 
+    /**
+     * 是否自动构建 resultMap 并使用
+     */
+    boolean autoResultMap() default false;
 }

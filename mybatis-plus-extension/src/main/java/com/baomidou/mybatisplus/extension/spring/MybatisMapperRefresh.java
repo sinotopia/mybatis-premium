@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.SystemClock;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -41,13 +39,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
-
 /**
- * <p>
- * 切莫用于生产环境（后果自负）<br>
- * Mybatis 映射文件热加载（发生变动后自动重新加载）.<br>
- * 方便开发时使用，不用每次修改xml文件后都要去重启应用.<br>
- * </p>
+ * 切莫用于生产环境（后果自负）
+ * <p>Mybatis 映射文件热加载（发生变动后自动重新加载）.</p>
+ * <p>方便开发时使用，不用每次修改xml文件后都要去重启应用.</p>
  *
  * @author nieqiurong
  * @since 2016-08-25
@@ -103,7 +98,6 @@ public class MybatisMapperRefresh implements Runnable {
 
     @Override
     public void run() {
-        final GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         /*
          * 启动 XML 热加载
          */
@@ -146,7 +140,6 @@ public class MybatisMapperRefresh implements Runnable {
                         for (String filePath : fileSet) {
                             File file = new File(filePath);
                             if (file.isFile() && file.lastModified() > beforeTime) {
-                                globalConfig.setRefresh(true);
                                 List<Resource> removeList = JAR_MAPPER.get(filePath);
                                 if (removeList != null && !removeList.isEmpty()) {
                                     for (Resource resource : removeList) {
@@ -157,10 +150,7 @@ public class MybatisMapperRefresh implements Runnable {
                                 }
                             }
                         }
-                        if (globalConfig.isRefresh()) {
-                            beforeTime = SystemClock.now();
-                        }
-                        globalConfig.setRefresh(true);
+                        beforeTime = SystemClock.now();
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
@@ -177,8 +167,6 @@ public class MybatisMapperRefresh implements Runnable {
 
     /**
      * 刷新mapper
-     *
-     * @throws Exception
      */
     @SuppressWarnings("rawtypes")
     private void refresh(Resource resource) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
@@ -218,10 +206,11 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理parameterMap
      *
-     * @param list
-     * @param namespace
+     * @param list      ignore
+     * @param namespace ignore
      */
-    private void cleanParameterMap(List<XNode> list, String namespace) {
+    @SuppressWarnings("unlikely-arg-type")
+	private void cleanParameterMap(List<XNode> list, String namespace) {
         for (XNode parameterMapNode : list) {
             String id = parameterMapNode.getStringAttribute("id");
             configuration.getParameterMaps().remove(namespace + StringPool.DOT + id);
@@ -231,8 +220,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理resultMap
      *
-     * @param list
-     * @param namespace
+     * @param list      ignore
+     * @param namespace ignore
      */
     private void cleanResultMap(List<XNode> list, String namespace) {
         for (XNode resultMapNode : list) {
@@ -263,8 +252,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理selectKey
      *
-     * @param list
-     * @param namespace
+     * @param list      ignore
+     * @param namespace ignore
      */
     private void cleanKeyGenerators(List<XNode> list, String namespace) {
         for (XNode context : list) {
@@ -277,8 +266,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理sql节点缓存
      *
-     * @param list
-     * @param namespace
+     * @param list      ignore
+     * @param namespace ignore
      */
     private void cleanSqlElement(List<XNode> list, String namespace) {
         for (XNode context : list) {

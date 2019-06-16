@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,17 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 /**
- * <p>
  * 普通片段
- * </p>
  *
  * @author miemie
  * @since 2018-06-27
@@ -62,7 +59,7 @@ public class NormalSegmentList extends AbstractISegmentList {
                         return false;
                     } else {
                         //和上次的不一样
-                        removeLast();
+                        removeAndFlushLast();
                     }
                 }
             } else {
@@ -85,10 +82,10 @@ public class NormalSegmentList extends AbstractISegmentList {
     }
 
     @Override
-    public String getSqlSegment() {
+    protected String childrenSqlSegment() {
         if (MatchSegment.AND_OR.match(lastValue)) {
-            removeLast();
+            removeAndFlushLast();
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(StringPool.SPACE));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(SPACE));
     }
 }

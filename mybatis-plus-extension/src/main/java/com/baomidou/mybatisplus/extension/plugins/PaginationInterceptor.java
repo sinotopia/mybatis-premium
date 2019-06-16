@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -29,10 +29,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -48,9 +45,7 @@ import java.util.*;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * 分页拦截器
- * </p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -63,11 +58,15 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * COUNT SQL 解析
      */
-    private ISqlParser sqlParser;
+    private ISqlParser countSqlParser;
     /**
      * 溢出总页数，设置第一页
      */
     private boolean overflow = false;
+    /**
+     * 单页限制 500 条，小于 0 如 -1 不受限制
+     */
+    private long limit = 500L;
     /**
      * 方言类型
      */
@@ -83,9 +82,9 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param originalSql 需要拼接的SQL
      * @param page        page对象
      * @param orderBy     是否需要拼接Order By
-     * @return
+     * @return ignore
      */
-    public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
+    public static String concatOrderBy(String originalSql, IPage<?> page, boolean orderBy) {
         if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
             || ArrayUtils.isNotEmpty(page.descs()))) {
             StringBuilder buildSql = new StringBuilder(originalSql);
@@ -105,8 +104,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 拼接多个排序方法
      *
-     * @param columns
-     * @param orderWord
+     * @param columns   ignore
+     * @param orderWord ignore
      */
     private static String concatOrderBuilder(String[] columns, String orderWord) {
         if (ArrayUtils.isNotEmpty(columns)) {
@@ -128,9 +127,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         // SQL 解析
         this.sqlParser(metaObject);
 
-        // 先判断是不是SELECT操作
+        // 先判断是不是SELECT操作  (2019-04-10 00:37:31 跳过存储过程)
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
+        if (SqlCommandType.SELECT != mappedStatement.getSqlCommandType()
+            || StatementType.CALLABLE == mappedStatement.getStatementType()) {
             return invocation.proceed();
         }
 
@@ -139,23 +139,30 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         Object paramObj = boundSql.getParameterObject();
 
         // 判断参数里是否有page对象
-        IPage page = null;
+        IPage<?> page = null;
         if (paramObj instanceof IPage) {
-            page = (IPage) paramObj;
+            page = (IPage<?>) paramObj;
         } else if (paramObj instanceof Map) {
-            for (Object arg : ((Map) paramObj).values()) {
+            for (Object arg : ((Map<?, ?>) paramObj).values()) {
                 if (arg instanceof IPage) {
-                    page = (IPage) arg;
+                    page = (IPage<?>) arg;
                     break;
                 }
             }
         }
 
-        /**
+        /*
          * 不需要分页的场合，如果 size 小于 0 返回结果集
          */
         if (null == page || page.getSize() < 0) {
             return invocation.proceed();
+        }
+
+        /*
+         * 处理单页条数限制
+         */
+        if (limit > 0 && limit <= page.getSize()) {
+            page.setSize(limit);
         }
 
         String originalSql = boundSql.getSql();
@@ -165,11 +172,11 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         boolean orderBy = true;
         if (page.isSearchCount()) {
-            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
+            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
-                return invocation.proceed();
+                return null;
             }
         }
 
@@ -181,13 +188,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         model.consumers(mappings, configuration, additionalParameters);
         metaObject.setValue("delegate.boundSql.sql", model.getDialectSql());
         metaObject.setValue("delegate.boundSql.parameterMappings", mappings);
-
-        /*
-         * <p> 禁用内存分页 </p>
-         * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
-         */
-        metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-        metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
     }
 
@@ -200,7 +200,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param page            IPage
      * @param connection      Connection
      */
-    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage page, Connection connection) {
+    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
@@ -220,7 +220,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql for %s.", e, sql);
+            throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql : \n %s \n", e, sql);
         }
     }
 

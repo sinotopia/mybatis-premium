@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.core.toolkit;
 
 import static java.util.stream.Collectors.toList;
@@ -9,10 +24,8 @@ import java.util.Map;
 import net.sf.cglib.beans.BeanMap;
 
 /**
- * <p>
- * Bean 转换工具类<br/>
- * 使用请依赖 cglib 包
- * </p>
+ * Bean 转换工具类
+ * <p>使用请依赖 cglib 包</p>
  *
  * @author hubin HCL
  * @since 2018-06-12
@@ -34,9 +47,7 @@ public final class BeanUtils {
     }
 
     /**
-     * <p>
      * map 装换为 java bean 对象
-     * </p>
      *
      * @param map   转换 MAP
      * @param clazz 对象 Class
@@ -49,9 +60,7 @@ public final class BeanUtils {
     }
 
     /**
-     * <p>
-     * List<T> 转换为 List<Map<String, Object>>
-     * </p>
+     * List&lt;T&gt; 转换为 List&lt;Map&lt;String, Object&gt;&gt;
      *
      * @param beans 转换对象集合
      * @return 返回转换后的 bean 列表
@@ -64,9 +73,7 @@ public final class BeanUtils {
     }
 
     /**
-     * <p>
-     * List<Map<String,Object>> 转换为 List<T>
-     * </p>
+     * List&lt;Map&lt;String, Object&gt;&gt; 转换为 List&lt;T&gt;
      *
      * @param maps  转换 MAP 集合
      * @param clazz 对象 Class

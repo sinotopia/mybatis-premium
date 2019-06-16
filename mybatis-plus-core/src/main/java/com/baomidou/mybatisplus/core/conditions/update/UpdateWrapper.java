@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +27,17 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>
  * Update 条件封装
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2018-05-30
  */
 @SuppressWarnings("serial")
-public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
+public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>>
+    implements Update<UpdateWrapper<T>, String> {
 
     /**
-     * SQL 更新字段内容，例如：name='1',age=2
+     * SQL 更新字段内容，例如：name='1', age=2
      */
     private final List<String> sqlSet;
 
@@ -61,15 +61,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.expression = mergeSegments;
     }
 
-    /**
-     * <p>
-     * 返回一个支持 lambda 函数写法的 wrapper
-     * </p>
-     */
-    public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression);
-    }
-
     @Override
     public String getSqlSet() {
         if (CollectionUtils.isEmpty(sqlSet)) {
@@ -78,27 +69,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return String.join(StringPool.COMMA, sqlSet);
     }
 
-    /**
-     * <p>
-     * SQL SET 字段
-     * </p>
-     *
-     * @param column 字段
-     * @param val    值
-     */
-    public UpdateWrapper<T> set(String column, Object val) {
-        return this.set(true, column, val);
-    }
-
-    /**
-     * <p>
-     * SQL SET 字段
-     * </p>
-     *
-     * @param condition 操作条件
-     * @param column    字段
-     * @param val       值
-     */
+    @Override
     public UpdateWrapper<T> set(boolean condition, String column, Object val) {
         if (condition) {
             sqlSet.add(String.format("%s=%s", column, formatSql("{0}", val)));
@@ -106,25 +77,23 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return typedThis;
     }
 
-    /**
-     * <p>
-     * SET 部分 SQL
-     * </p>
-     *
-     * @param sql SET 部分内容
-     */
-    public UpdateWrapper<T> setSql(String sql) {
-        sqlSet.add(sql);
+    @Override
+    public UpdateWrapper<T> setSql(boolean condition, String sql) {
+        if (condition && StringUtils.isNotEmpty(sql)) {
+            sqlSet.add(sql);
+        }
         return typedThis;
     }
 
-    @Override
-    protected String columnToString(String column) {
-        return column;
+    /**
+     * 返回一个支持 lambda 函数写法的 wrapper
+     */
+    public LambdaUpdateWrapper<T> lambda() {
+        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
-    protected UpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+    protected UpdateWrapper<T> instance() {
         return new UpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

@@ -5,10 +5,11 @@
 <configuration>
 
     <settings>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="defaultEnumTypeHandler"
+                 value="com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler"/>
     </settings>
 
-    <objectFactory type="com.baomidou.mybatisplus.test.reflection.ExampleObjectFactory">
-        <property name="someProperty" value="100"/>
-    </objectFactory>
+    <mappers>
+        <mapper class="com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper"/>
+    </mappers>
 </configuration>

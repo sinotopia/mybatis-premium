@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -20,9 +20,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 
 /**
- * <p>
- * 继承 XMLLanguageDriver 重装构造函数，使用自定义 ParameterHandler
- * </p>
+ * 继承 {@link XMLLanguageDriver} 重装构造函数, 使用自己的 MybatisDefaultParameterHandler
  *
  * @author hubin
  * @since 2016-03-11
@@ -30,9 +28,9 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
 
     @Override
-    public MybatisDefaultParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
-                                                   BoundSql boundSql) {
-        /* 使用自定义 ParameterHandler */
+    public MybatisDefaultParameterHandler createParameterHandler(MappedStatement mappedStatement,
+                                                                 Object parameterObject, BoundSql boundSql) {
+        // TODO 使用 MybatisDefaultParameterHandler 而不是 ParameterHandler
         return new MybatisDefaultParameterHandler(mappedStatement, parameterObject, boundSql);
     }
 }

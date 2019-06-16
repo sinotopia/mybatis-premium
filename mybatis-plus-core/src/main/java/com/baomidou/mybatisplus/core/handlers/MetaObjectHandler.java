@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,21 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-
-import java.util.Objects;
-import java.util.Optional;
 
 /**
- * <p>
  * 元对象字段填充控制器抽象类，实现公共字段自动写入
- * </p>
  *
  * @author hubin
  * @since 2016-08-28
@@ -38,6 +37,8 @@ public interface MetaObjectHandler {
 
     /**
      * 乐观锁常量
+     *
+     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
      */
     String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
 
@@ -56,9 +57,7 @@ public interface MetaObjectHandler {
     void updateFill(MetaObject metaObject);
 
     /**
-     * <p>
      * 通用填充
-     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -82,9 +81,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * insert 时填充,只会填充 fill 被标识为 INSERT 与 INSERT_UPDATE 的字段
-     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -96,9 +93,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * update 时填充,只会填充 fill 被标识为 UPDATE 与 INSERT_UPDATE 的字段
-     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -110,12 +105,8 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * Common method to set value for java bean.
-     * </p>
-     * <p>
-     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
-     * </p>
+     * <p>如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);</p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -142,12 +133,8 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * get value from java bean by propertyName
-     * </p>
-     * <p>
-     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
-     * </p>
+     * <p>如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);</p>
      *
      * @param fieldName  java bean property name
      * @param metaObject parameter wrapper
@@ -163,12 +150,12 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * 填充判断
-     * </p>
      * <li> 如果是主键,不填充 </li>
      * <li> 根据字段名找不到字段,不填充 </li>
      * <li> 字段类型与填充值类型不匹配,不填充 </li>
+     * <li> 字段类型需在TableField注解里配置fill: @TableField(value="test_type", fill = FieldFill.INSERT), 没有配置或者不匹配时不填充 </li>
+     * v_3.1.0以后的版本(不包括3.1.0)，子类的值也可以自动填充，Timestamp的值也可以填入到java.util.Date类型里面
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -178,12 +165,13 @@ public interface MetaObjectHandler {
      * @since 3.0.7
      */
     default boolean isFill(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
-        TableInfo tableInfo = metaObject.hasGetter(MP_OPTLOCK_ET_ORIGINAL) ?
-            TableInfoHelper.getTableInfo(metaObject.getValue(MP_OPTLOCK_ET_ORIGINAL).getClass())
+        TableInfo tableInfo = metaObject.hasGetter(Constants.MP_OPTLOCK_ET_ORIGINAL) ?
+            TableInfoHelper.getTableInfo(metaObject.getValue(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass())
             : TableInfoHelper.getTableInfo(metaObject.getOriginalObject().getClass());
         if (Objects.nonNull(tableInfo)) {
             Optional<TableFieldInfo> first = tableInfo.getFieldList().stream()
-                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().equals(fieldVal.getClass()))
+                //v_3.1.1+ 设置子类的值也可以通过
+                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))
                 .findFirst();
             if (first.isPresent()) {
                 FieldFill fill = first.get().getFieldFill();

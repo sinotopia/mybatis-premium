@@ -1,5 +1,99 @@
 ﻿# CHANGELOG
 
+## [v3.1.1] 2019.04.25
+- 新增 996icu license 协议
+- 新增 mybatis-plus-dts 分布式事务 rabbit 可靠消息机制
+- 新增 DynamicTableNameParser 解析器、支持动态表名
+- 优化 getOne 日志打印
+- sql 优化跳过存储过程
+- 优化分页查询(count为0不继续查询)
+- 修复分页一级缓存无法继续翻页问题
+- MybatisMapWrapperFactory 自动注入
+- 支持纯注解下使用 IPage 的子类作为返回值
+- 逻辑删除不再需要 LogicInject
+- GlobalConfig 加入 enableSqlRunner 属性控制是否注入 SqlRunner ,默认 false
+- SqlParser注解不再需要全局设置参数才会缓存,以及支持注解在 mapper 上
+- GlobalConfig 的 sqlParserCache 设置为过时
+- mybatis 升级到 3.5.1 , mybatis-spring 升级到 2.0.1 , jsqlparser 降级到 1.2
+- ISqlInjector 接口 移除 injectSqlRunner 方法
+- SqlFormatter 类设置为过时
+- 解决自动注入的 method 的 SqlCommandType 在逻辑删除下混乱问题
+- 新增 AlwaysUpdateSomeColumnById 选装件
+- SFunction 继承 Function
+- DbConfig 的 columnLike 和 dbType 属性设置为过时
+- DbConfig 新增 schema 和 columnFormat 属性
+- TableField 注解增加 keepGlobalFormat 属性
+- TableName 注解增加 schema 和 keepGlobalPrefix 属性
+- fixed bug tmp文件格式错乱 github #1048
+- 处理表/字段名称抽象 INameConvert 接口策略 github #1038
+- DB2支持动态 schema 配置 github #1035
+- 把字段缓存的key从className替换成了.class, 如果使用dev-tools会导致：MybatisPlusException: Your property named "xxxx" cannot find the corresponding database column name!(解决方案：去掉dev-tools)
+
+
+## [v3.1.0] 2019.02.24
+- 升级 `mybatis` 到 `3.5.0` 版本
+- 升级 `mybatis-spring` 到 `2.0.0` 版本
+- 升级 `jsqlparser` 到 `1.4` 版本
+- 新增 p6spy 日志打印支持
+- 变更 `IService` 的 `getOne(Wrapper<T> queryWrapper)` 方法如果获取到多条数据将会抛出 `TooManyResultsException` 异常
+- 修复 自定义分页功能不支持注解 `@select` 问题
+- 修复 生成器的配置 kotlin 模式下 swagger 模式无效问题
+- 修复 生成器 is 开头字段无法自动注解问题
+- 修复 生成器 Serializable Active 模式继承父类包自动导入异常问题
+- 修复 生成器 支持公共字段自动读取父类 class 属性问题
+- 修复 枚举(注解方式)转换器在存储过程中转换失败
+- 修复 beetl 模板逻辑删除注解错误问题
+- 修复 通过 `mybatis-config.xml` 方式构建的 `Configuration` 的 `mapUnderscoreToCamelCase` 默认值非 `true` 的问题
+- 修复 sql解析器动态代理引发的bug
+- 修复 `mapper` 使用纯注解下可能触发的重试机制在个别情况下启动报错的问题
+- 优化 支持指定 `defaultEnumTypeHandler` 来进行通用枚举处理
+- 优化 从 hibernate copy 最新代码到 SqlFormatter
+- 移除 `wrapper` 的 `in` 以及 `notIn` 方法内部对入参 `coll` 及 `动态数组` 的非empty判断(**注意: 如果以前有直接使用以上的方法的入参可能为 empty 的现在会产出如下sql: `in ()` 或 `not in ()` 导致报错**)
+- 移除 `wrapper` 的 `notInOrThrow` 和 `inOrThrow` 方法(**使用新版的 `in` 以及 `notIn` 效果一样,异常则为sql异常**)
+- 移除 `IService` 的 `query` 链式调用的 `delete` 操作
+- 移除 xml 热加载相关配置项,只保留`MybatisMapperRefresh`该类并打上过时标志
+- 日常优化
+
+## [v3.0.7.1] 2019.01.02
+- 修复 lambdaWrapper 的获取不到主键缓存的问题
+- 优化 `IService` 新增的 `update` 链式调用支持 `remove` 操作
+- 过时 `IService` 新增的 `query` 链式调用的 `delete` 打上过时标识
+- 日常优化
+
+
+## [v3.0.7] 2019.01.01
+- 优化 generator 的 postgresSql 数据库支持生成 java8 时间类型
+- 优化 generator 的 sqlServer 数据库支持生成 java8 时间类型
+- 优化 LambdaWrapper 反射获取字段信息支持首字母大写的字段
+- 优化 仅 LambdaWrapper 的 select 优化(支持字段对不上数据库时自动 as)
+- 优化 重复扫描 `BaseMapper` 子类时,`TableInfo` 缓存的 `Configuration` 只保留最后一个
+- 优化 `MergeSegments` 获取 `getSqlSegment` 方式
+- 优化 SQL 自动注入器的初始化 modelClass 过程,提高初始化速度
+- 优化 `BaseMapper` 的 `update` 方法的第一个入参支持为 `null`
+- 新增 `IService` 增加4个链式调用方法
+- 新增 代码生成器增加 `beetl` 模板
+- 新增 `IdWorker` 增加毫秒时间 ID 可用于订单 ID
+- 新增 wrapper 新增 `inOrThrow` 方法,入参为 empty 则抛出 `MybatisPlusExcuption` 异常
+- 新增 `MetaObjectHandler` 新提供几个能根据注解才插入值的 `default` 方法
+- 新增 kotlin 下 lambda 的支持,`KtQueryWrapper` 和 `KtUpdateWrapper`类
+- 新增 简化MP自定义SQL使用方法,现在可以使用 `自定义sql` + ${ew.customSqlSegment} 方式
+- 新增 提供新的 `InsertBatchSomeColumn` 选装件
+- 修复 Page` 的 `setTotal(Long total)` -> `setTotal(long total)`
+- 修复 `Page` 的 `setSearchCount` 为 `public`
+- 修复 `TenantSqlParser` 如果 where 条件的开头是一个 `orExpression`，直接在左边用and拼接租户信息会造成逻辑不符合预期的问题
+- 修复 wrapper 的 `lambda` 方法会向下传递 sqlSelect
+- 修复 `ServiceImpl` 个别 batch 操作 `flushStatements` 问题
+- 修复 selectObjs 泛型错误问题
+- 移除 `InsertBatchAllColumn` 选装件
+- 移除 `ServiceImpl` 的 batch 操作之外的事务注解
+- 移除 `Model` 的事务注解
+- 移除 `AbstractSqlInjector` 的 `isInjectSqlRunner` 方法(SqlRunner初始化较早，目前isInjectSqlRunner无法控制)
+- 移除 `MybatisSessionFactoryBuilder`
+- 移除 对 `mybatis-plus-generator` 包的依赖,自己按需引入
+- 还原 xml 热加载,打上过时标识
+- 升级 jsqlparser 依赖到 1.3
+- 日常优化
+
 
 ## [v3.0.6] 2018.11.18
 - 修复entity中2个以上条件并且拼接ODER BY 或 GROUP BY 产生的 WHERE X1 =? AND X2
@@ -20,7 +114,7 @@
 - batchsize 阈值设 30 修改为 1000 提升效率
 - 修复在极端情况下saveOrUpdate执行错误
 - 移除 MybatisSqlSessionTemplate
-- 优化 xml 热加载
+- 移除 xml 热加载
 - 其他优化
 
 
@@ -558,7 +652,7 @@ mybatis-plus:
 - Wrapper增加ne方法
 - 修复Mybatis动态参数无法生成totalCount问题
 - 代码结构优化，生成器模板优化
-- 解决issus[138,140,142,148,151,152,153,156,157]，具体请查看里程碑[mybatis-plus 2.0.1 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/2)中所有issus
+- 解决issus[138,140,142,148,151,152,153,156,157]，具体请查看里程碑[mybatis-plus 2.0.1 计划](https://gitee.com/baomidou/mybatis-plus/milestones/2)中所有issus
 
 ## [v2.0.0] 2016.12.11
 
@@ -586,7 +680,7 @@ mybatis-plus:
 - 精简底层Service、Mapper继承结构
 - 不喜欢在XML中写SQL的福音，新增执行SQL方式，具体请查看SqlQuery
 - 优化代码结构
-- 解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/1)中所有issus
+- 解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](https://gitee.com/baomidou/mybatis-plus/milestones/1)中所有issus
 
 ## [v1.4.9] 2016.10.28
 

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.core.parser;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
- * <p>
  * SQL 解析接口
- * </p>
  *
  * @author hubin
  * @since 2017-09-01
@@ -28,9 +26,7 @@ import org.apache.ibatis.reflection.MetaObject;
 public interface ISqlParser {
 
     /**
-     * <p>
      * 解析 SQL 方法
-     * </p>
      *
      * @param metaObject 元对象
      * @param sql        SQL 语句
@@ -38,4 +34,17 @@ public interface ISqlParser {
      */
     SqlInfo parser(MetaObject metaObject, String sql);
 
+    /**
+     * <p>
+     * 是否执行 SQL 解析 parser 方法
+     * </p>
+     *
+     * @param metaObject 元对象
+     * @param sql        SQL 语句
+     * @return SQL 信息
+     */
+    default boolean doFilter(final MetaObject metaObject, final String sql) {
+        // 默认 true 执行 SQL 解析, 可重写实现控制逻辑
+        return true;
+    }
 }

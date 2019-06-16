@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,50 +15,50 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-
-
 /**
- * <p>
  * SQL 自动注入器
- * </p>
  *
  * @author hubin
  * @since 2018-04-07
  */
 public abstract class AbstractSqlInjector implements ISqlInjector {
 
-    @Override
-    public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        String className = mapperClass.toString();
-        Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
-        if (!mapperRegistryCache.contains(className)) {
-            List<AbstractMethod> methodList = this.getMethodList();
-            Assert.notEmpty(methodList, "No effective injection method was found.");
-            // 循环注入自定义方法
-            methodList.forEach(m -> m.inject(builderAssistant, mapperClass));
-            mapperRegistryCache.add(className);
-            /**
-             * 初始化 SQL 解析
-             */
-            if (GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration()).isSqlParserCache()) {
-                SqlParserHelper.initSqlParserInfoCache(mapperClass);
-            }
-        }
-    }
+    private static final Log logger = LogFactory.getLog(AbstractSqlInjector.class);
 
     @Override
-    public void injectSqlRunner(Configuration configuration) {
-        if (isInjectSqlRunner()) {
-            new SqlRunnerInjector().inject(configuration);
+    public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+        Class<?> modelClass = extractModelClass(mapperClass);
+        if (modelClass != null) {
+            String className = mapperClass.toString();
+            Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
+            if (!mapperRegistryCache.contains(className)) {
+                List<AbstractMethod> methodList = this.getMethodList(mapperClass);
+                if (CollectionUtils.isNotEmpty(methodList)) {
+                    TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+                    // 循环注入自定义方法
+                    methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
+                } else {
+                    logger.debug(mapperClass.toString() + ", No effective injection method was found.");
+                }
+                mapperRegistryCache.add(className);
+            }
         }
     }
 
@@ -67,18 +67,37 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * 获取 注入的方法
      * </p>
      *
+     * @param mapperClass 当前mapper
      * @return 注入的方法集合
+     * @since 3.1.2 add  mapperClass
      */
-    public abstract List<AbstractMethod> getMethodList();
+    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass);
 
     /**
-     * <p>
-     * 是否注入SqlRunner,抽象类默认注入,如果不需要重写该方法
-     * </p>
+     * 提取泛型模型,多泛型的时候请将泛型T放在第一位
      *
-     * @return 注入的方法集合
+     * @param mapperClass mapper 接口
+     * @return mapper 泛型
      */
-    public boolean isInjectSqlRunner() {
-        return true;
+    protected Class<?> extractModelClass(Class<?> mapperClass) {
+        Type[] types = mapperClass.getGenericInterfaces();
+        ParameterizedType target = null;
+        for (Type type : types) {
+            if (type instanceof ParameterizedType) {
+                Type[] typeArray = ((ParameterizedType) type).getActualTypeArguments();
+                if (ArrayUtils.isNotEmpty(typeArray)) {
+                    for (Type t : typeArray) {
+                        if (t instanceof TypeVariable || t instanceof WildcardType) {
+                            break;
+                        } else {
+                            target = (ParameterizedType) type;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
     }
 }

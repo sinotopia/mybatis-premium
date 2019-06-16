@@ -1,27 +1,24 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,13 +28,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 /**
- * <p>
  * IOUtils Copy org.apache.commons.io.IOUtils
- * </p>
  *
  * @author Caratacus
  * @since 2016-11-23
@@ -82,6 +74,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(in);
      * }
      * </pre>
+     * </p>
      *
      * @param input the Reader to close, may be null or already closed
      */
@@ -94,8 +87,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link Writer#close()}, except any exceptions will be ignored. This is typically used in finally
      * blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * Writer out = null;
@@ -109,6 +104,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(out);
      * }
      * </pre>
+     * </p>
      *
      * @param output the Writer to close, may be null or already closed
      */
@@ -121,8 +117,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link InputStream#close()}, except any exceptions will be ignored. This is typically used in
      * finally blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * byte[] data = new byte[1024];
@@ -137,6 +135,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(in);
      * }
      * </pre>
+     * </p>
      *
      * @param input the InputStream to close, may be null or already closed
      */
@@ -149,8 +148,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link OutputStream#close()}, except any exceptions will be ignored. This is typically used in
      * finally blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * byte[] data = &quot;Hello, World&quot;.getBytes();
@@ -166,6 +167,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(out);
      * }
      * </pre>
+     * </p>
      *
      * @param output the OutputStream to close, may be null or already closed
      */
@@ -178,6 +180,7 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link Closeable#close()}, except any exceptions will be ignored. This is typically used in finally
      * blocks.
+     * </p>
      * <p>
      * Example code:
      * </p>
@@ -194,6 +197,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(closeable);
      * }
      * </pre>
+     * </p>
      * <p>
      * Closing all streams:
      * </p>
@@ -206,6 +210,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(outputStream);
      * }
      * </pre>
+     * </p>
      *
      * @param closeable the objects to close, may be null or already closed
      * @since 2.0
@@ -224,6 +229,7 @@ public class IOUtils {
      * Closes a <code>Closeable</code> unconditionally.
      * <p>
      * Equivalent to {@link Closeable#close()}, except any exceptions will be ignored.
+     * </p>
      * <p>
      * This is typically used in finally blocks to ensure that the closeable is closed even if an Exception was thrown
      * before the normal close statement was reached. <br>
@@ -231,6 +237,7 @@ public class IOUtils {
      * case.</b> <br>
      * It is only intended to simplify tidying up where normal processing has already failed and reporting close failure
      * as well is not necessary or useful.
+     * </p>
      * <p>
      * Example code:
      * </p>
@@ -247,8 +254,10 @@ public class IOUtils {
      *     <b>IOUtils.closeQuietly(closeable); // In case normal close was skipped due to Exception</b>
      * }
      * </pre>
+     * </p>
      * <p>
      * Closing all streams: <br>
+     * </p>
      * <p>
      * <pre>
      * try {
@@ -257,6 +266,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(inputStream, outputStream);
      * }
      * </pre>
+     * </p>
      *
      * @param closeables the objects to close, may be null or already closed
      * @see #closeQuietly(Closeable)
@@ -276,13 +286,15 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link Socket#close()}, except any exceptions will be ignored. This is typically used in finally
      * blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * Socket socket = null;
      * try {
-     * 	socket = new Socket(&quot;http://www.foo.com/&quot;, 80);
+     * 	socket = new Socket(&quot;https://www.foo.com/&quot;, 443);
      * 	// process socket
      * 	socket.close();
      * } catch (Exception e) {
@@ -291,6 +303,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(socket);
      * }
      * </pre>
+     * </p>
      *
      * @param sock the Socket to close, may be null or already closed
      * @since 2.0
@@ -310,8 +323,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link Selector#close()}, except any exceptions will be ignored. This is typically used in finally
      * blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * Selector selector = null;
@@ -325,6 +340,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(selector);
      * }
      * </pre>
+     * </p>
      *
      * @param selector the Selector to close, may be null or already closed
      * @since 2.2
@@ -344,8 +360,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link ServerSocket#close()}, except any exceptions will be ignored. This is typically used in
      * finally blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * ServerSocket socket = null;
@@ -359,6 +377,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(socket);
      * }
      * </pre>
+     * </p>
      *
      * @param sock the ServerSocket to close, may be null or already closed
      * @since 2.2
@@ -378,8 +397,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link Connection#close()}, except any exceptions will be ignored. This is typically used in
      * finally blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * Connection conn = null;
@@ -393,6 +414,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(conn);
      * }
      * </pre>
+     * </p>
      *
      * @param conn the Connection to close, may be null or already closed
      * @since 2.2
@@ -412,8 +434,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link ResultSet#close()}, except any exceptions will be ignored. This is typically used in finally
      * blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * AutoCloseable statement = null;
@@ -427,6 +451,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(conn);
      * }
      * </pre>
+     * </p>
      *
      * @param resultSet the Connection to close, may be null or already closed
      * @since 2.2
@@ -446,8 +471,10 @@ public class IOUtils {
      * <p>
      * Equivalent to {@link Statement#close()}, except any exceptions will be ignored. This is typically used in finally
      * blocks.
+     * </p>
      * <p>
      * Example code:
+     * </p>
      * <p>
      * <pre>
      * AutoCloseable statement = null;
@@ -461,6 +488,7 @@ public class IOUtils {
      * 	IOUtils.closeQuietly(conn);
      * }
      * </pre>
+     * </p>
      *
      * @param statement the Connection to close, may be null or already closed
      * @since 2.2
@@ -479,6 +507,7 @@ public class IOUtils {
      * Closes a <code>AutoCloseable</code> unconditionally.
      * <p>
      * Equivalent to {@link AutoCloseable#close()}, except any exceptions will be ignored.
+     * </p>
      * <p>
      * This is typically used in finally blocks to ensure that the closeable is closed even if an Exception was thrown
      * before the normal close statement was reached. <br>
@@ -486,6 +515,7 @@ public class IOUtils {
      * case.</b> <br>
      * It is only intended to simplify tidying up where normal processing has already failed and reporting close failure
      * as well is not necessary or useful.
+     * </p>
      * <p>
      * Example code:
      * </p>
@@ -502,8 +532,10 @@ public class IOUtils {
      *     <b>IOUtils.closeQuietly(closeable); // In case normal close was skipped due to Exception</b>
      * }
      * </pre>
+     * </p>
      * <p>
      * Closing all streams: <br>
+     * </p>
      *
      * @param statements the objects to close, may be null or already closed
      * @see #closeQuietly(Statement)

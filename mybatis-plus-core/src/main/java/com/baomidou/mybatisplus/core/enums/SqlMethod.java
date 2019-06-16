@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.core.enums;
 
 /**
- * <p>
  * MybatisPlus 支持 SQL 方法
- * </p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -49,14 +47,13 @@ public enum SqlMethod {
      * 修改
      */
     UPDATE_BY_ID("updateById", "根据ID 选择修改数据", "<script>\nUPDATE %s %s WHERE %s=#{%s} %s\n</script>"),
+    UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>\nUPDATE %s SET %s WHERE %s=#{%s} %s\n</script>"),
     UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>\nUPDATE %s %s %s\n</script>"),
 
     /**
      * 逻辑删除 -> 修改
      */
     LOGIC_UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>\nUPDATE %s %s WHERE %s=#{%s} %s\n</script>"),
-    LOGIC_UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>\nUPDATE %s %s WHERE %s=#{%s} %s\n</script>"),
-
 
     /**
      * 查询
@@ -65,7 +62,7 @@ public enum SqlMethod {
     SELECT_BY_MAP("selectByMap", "根据columnMap 查询一条数据", "<script>\nSELECT %s FROM %s %s\n</script>"),
     SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>\nSELECT %s FROM %s WHERE %s IN (%s)\n</script>"),
     SELECT_ONE("selectOne", "查询满足条件一条数据", "<script>\nSELECT %s FROM %s %s\n</script>"),
-    SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>\nSELECT COUNT(1) FROM %s %s\n</script>"),
+    SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>\nSELECT COUNT(%s) FROM %s %s\n</script>"),
     SELECT_LIST("selectList", "查询满足条件所有数据", "<script>\nSELECT %s FROM %s %s\n</script>"),
     SELECT_PAGE("selectPage", "查询满足条件所有数据（并翻页）", "<script>\nSELECT %s FROM %s %s\n</script>"),
     SELECT_MAPS("selectMaps", "查询满足条件所有数据", "<script>\nSELECT %s FROM %s %s\n</script>"),

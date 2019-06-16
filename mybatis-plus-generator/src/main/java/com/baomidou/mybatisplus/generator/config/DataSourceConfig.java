@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,31 +15,19 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.generator.config.converts.*;
+import com.baomidou.mybatisplus.generator.config.querys.*;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.generator.config.converts.DB2TypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
-import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
-import com.baomidou.mybatisplus.generator.config.querys.MariadbQuery;
-import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
-import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
-
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 /**
- * <p>
  * 数据库配置
- * </p>
  *
  * @author YangHu
  * @since 2016/8/30
@@ -99,6 +87,12 @@ public class DataSourceConfig {
                 case MARIADB:
                     dbQuery = new MariadbQuery();
                     break;
+                case H2:
+                    dbQuery = new H2Query();
+                    break;
+                case SQLITE:
+                    dbQuery = new SqliteQuery();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
@@ -114,22 +108,45 @@ public class DataSourceConfig {
      * @return 类型枚举值
      */
     public DbType getDbType() {
-        if (null == dbType) {
-            if (driverName.contains("mysql")) {
-                dbType = DbType.MYSQL;
-            } else if (driverName.contains("oracle")) {
-                dbType = DbType.ORACLE;
-            } else if (driverName.contains("postgresql")) {
-                dbType = DbType.POSTGRE_SQL;
-            } else if (driverName.contains("db2")) {
-                dbType = DbType.DB2;
-            } else if (driverName.contains("mariadb")) {
-                dbType = DbType.MARIADB;
-            } else {
-                throw ExceptionUtils.mpe("Unknown type of database!");
+        if (null == this.dbType) {
+            this.dbType = this.getDbType(this.driverName);
+            if (null == this.dbType) {
+                this.dbType = this.getDbType(this.url.toLowerCase());
+                if (null == this.dbType) {
+                    throw ExceptionUtils.mpe("Unknown type of database!");
+                }
             }
         }
-        return dbType;
+
+        return this.dbType;
+    }
+
+    /**
+     * 判断数据库类型
+     *
+     * @param str 用于寻找特征的字符串，可以是 driverName 或小写后的 url
+     * @return 类型枚举值，如果没找到，则返回 null
+     */
+    private DbType getDbType(String str) {
+        if (str.contains("mysql")) {
+            return DbType.MYSQL;
+        } else if (str.contains("oracle")) {
+            return DbType.ORACLE;
+        } else if (str.contains("postgresql")) {
+            return DbType.POSTGRE_SQL;
+        } else if (str.contains("sqlserver")) {
+            return DbType.SQL_SERVER;
+        } else if (str.contains("db2")) {
+            return DbType.DB2;
+        } else if (str.contains("mariadb")) {
+            return DbType.MARIADB;
+        } else if (str.contains("sqlite")) {
+            return DbType.MARIADB;
+        } else if (str.contains("h2")) {
+            return DbType.H2;
+        } else {
+            return null;
+        }
     }
 
     public ITypeConvert getTypeConvert() {
@@ -146,6 +163,9 @@ public class DataSourceConfig {
                     break;
                 case DB2:
                     typeConvert = new DB2TypeConvert();
+                    break;
+                case SQLITE:
+                    typeConvert = new SqliteTypeConvert();
                     break;
                 case MARIADB:
                     typeConvert = new MySqlTypeConvert();

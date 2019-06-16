@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -34,11 +34,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+// TODO 苗神来改个名
 /**
- * <p>
- * //todo 苗神来改个名
  * 防止全表更新与删除
- * </p>
  *
  * @author hubin
  * @since 2016-08-16
@@ -49,7 +47,8 @@ import lombok.experimental.Accessors;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class SqlExplainInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
-    private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
+    @SuppressWarnings("unused")
+	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
     private Properties properties;
 

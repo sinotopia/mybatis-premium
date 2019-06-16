@@ -1,30 +1,46 @@
+/*
+ * Copyright (c) 2011-2019, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.test.h2;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
+import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import com.baomidou.mybatisplus.test.h2.entity.H2Student;
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
-import com.baomidou.mybatisplus.test.h2.entity.mapper.H2StudentMapper;
-import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-
 /**
- * <p>
  * Mybatis Plus H2 Junit Test
- * </p>
  *
  * @author hubin
  * @since 2018-06-05
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2Delete1Eq1Test extends BaseTest {
+class H2Delete1Eq1Test extends BaseTest {
 
     @Resource
     protected H2UserMapper logicDeleteMapper;
@@ -32,7 +48,8 @@ public class H2Delete1Eq1Test extends BaseTest {
     protected H2StudentMapper defaultMapper;
 
     @Test
-    public void crudTest() {
+    @Order(1)
+    void crudTest() {
         for (int i = 0; i < 10; i++) {
             logicDeleteMapper.insert(new H2User("mp" + i, AgeEnum.ONE));
         }
@@ -58,7 +75,8 @@ public class H2Delete1Eq1Test extends BaseTest {
     }
 
     @Test
-    public void delete() {
+    @Order(Integer.MAX_VALUE)
+    void delete() {
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());
     }

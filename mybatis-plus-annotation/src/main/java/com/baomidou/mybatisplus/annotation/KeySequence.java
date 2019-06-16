@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,18 +15,11 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
- * <p>
  * 序列主键策略
- * oracle
- * </p>
+ * <p>oracle</p>
  *
  * @author zashitou
  * @since 2017.4.20
@@ -38,17 +31,12 @@ import java.lang.annotation.Target;
 public @interface KeySequence {
 
     /**
-     * <p>
      * 序列名
-     * </p>
      */
     String value() default "";
 
     /**
-     * <p>
      * id的类型
-     * </p>
      */
-    Class clazz() default Long.class;
-
+    Class<?> clazz() default Long.class;
 }

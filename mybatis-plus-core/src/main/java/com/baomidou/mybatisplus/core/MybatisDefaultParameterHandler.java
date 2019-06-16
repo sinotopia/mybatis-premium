@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -15,20 +15,12 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
@@ -37,20 +29,12 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
- * <p>
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
- * </p>
- * TODO: 3.0 优化注解填充 ?   怎么优化?
  *
  * @author hubin
  * @since 2016-03-11
@@ -73,17 +57,18 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * <p>
      * 批量（填充主键 ID）
-     * </p>
      *
      * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
-     * @return
+     * @return ignore
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
         //检查 parameterObject
-        if (null == parameterObject) {
+        if (null == parameterObject
+            || ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
+            || parameterObject.getClass() == String.class) {
+            //todo 这里需要处理下类型判断,逻辑删除还会进入这里,但SqlCommandType为UPDATE
             return null;
         }
         // 全局配置是否配置填充器
@@ -117,15 +102,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             } else {
                 TableInfo tableInfo = null;
                 if (parameterObject instanceof Map) {
-                    Map map = (Map) parameterObject;
+                    Map<?, ?> map = (Map<?, ?>) parameterObject;
                     if (map.containsKey(Constants.ENTITY)) {
                         Object et = map.get(Constants.ENTITY);
                         if (et != null) {
                             if (et instanceof Map) {
-                                Map realEtMap = (Map) et;
-                                if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {
-                                    //refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
+                                Map<?, ?> realEtMap = (Map<?, ?>) et;
+                                if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
+                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass());
                                 }
                             } else {
                                 tableInfo = TableInfoHelper.getTableInfo(et.getClass());
@@ -142,9 +126,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * <p>
      * 处理正常批量插入逻辑
-     * </p>
      * <p>
      * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
      * wrapCollection 实现 StrictMap 封装逻辑
@@ -172,9 +154,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * <p>
      * 自定义元对象填充控制器
-     * </p>
      *
      * @param metaObjectHandler 元数据填充处理器
      * @param tableInfo         数据库表反射信息

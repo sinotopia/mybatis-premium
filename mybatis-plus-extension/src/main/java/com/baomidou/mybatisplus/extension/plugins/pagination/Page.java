@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -22,9 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>
  * 简单分页模型
- * </p>
  *
  * @author hubin
  * @since 2018-06-09
@@ -50,27 +48,19 @@ public class Page<T> implements IPage<T> {
      */
     private long current = 1;
     /**
-     * <p>
      * SQL 排序 ASC 数组
-     * </p>
      */
     private String[] ascs;
     /**
-     * <p>
      * SQL 排序 DESC 数组
-     * </p>
      */
     private String[] descs;
     /**
-     * <p>
      * 自动优化 COUNT SQL
-     * </p>
      */
     private boolean optimizeCountSql = true;
     /**
-     * <p>
      * 是否进行 count 查询
-     * </p>
      */
     private boolean isSearchCount = true;
 
@@ -79,9 +69,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 分页构造函数
-     * </p>
      *
      * @param current 当前页
      * @param size    每页显示条数
@@ -108,9 +96,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 是否存在上一页
-     * </p>
      *
      * @return true / false
      */
@@ -119,9 +105,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 是否存在下一页
-     * </p>
      *
      * @return true / false
      */
@@ -146,7 +130,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public Page<T> setTotal(Long total) {
+    public Page<T> setTotal(long total) {
         this.total = total;
         return this;
     }
@@ -187,9 +171,7 @@ public class Page<T> implements IPage<T> {
 
 
     /**
-     * <p>
      * 升序
-     * </p>
      *
      * @param ascs 多个升序字段
      */
@@ -211,9 +193,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 降序
-     * </p>
      *
      * @param descs 多个降序字段
      */
@@ -235,7 +215,7 @@ public class Page<T> implements IPage<T> {
         return isSearchCount;
     }
 
-    Page<T> setSearchCount(boolean isSearchCount) {
+    public Page<T> setSearchCount(boolean isSearchCount) {
         this.isSearchCount = isSearchCount;
         return this;
     }

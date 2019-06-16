@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -21,26 +21,28 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 /**
- * <p>
  * 数据库表字段反射信息
- * </p>
  *
  * @author hubin sjy willenfoo tantan
  * @since 2016-09-09
  */
 @Getter
+@ToString
+@EqualsAndHashCode
 public class TableFieldInfo implements Constants {
 
     /**
      * 是否有存在字段名与属性名关联
-     * true: 表示要进行 as
+     * <p>true: 表示要进行 as</p>
      */
     private final boolean related;
     /**
@@ -65,17 +67,42 @@ public class TableFieldInfo implements Constants {
     private final boolean isCharSequence;
     /**
      * 字段策略【 默认，自判断 null 】
+     *
+     * @since deprecated v_3.1.2 @2019-5-7
+     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      */
+    @Deprecated
     private final FieldStrategy fieldStrategy;
     /**
-     * 标记该字段属于哪个类
+     * 字段验证策略之 insert
+     * Refer to {@link TableField#insertStrategy()}
+     *
+     * @since added v_3.1.2 @2019-5-7
      */
-    private final Class<?> clazz;
+    private final FieldStrategy insertStrategy;
+    /**
+     * 字段验证策略之 update
+     * Refer to {@link TableField#updateStrategy()}
+     *
+     * @since added v_3.1.2 @2019-5-7
+     */
+    private final FieldStrategy updateStrategy;
+    /**
+     * 字段验证策略之 where
+     * Refer to {@link TableField#whereStrategy()}
+     *
+     * @since added v_3.1.2 @2019-5-7
+     */
+    private final FieldStrategy whereStrategy;
     /**
      * 是否进行 select 查询
-     * 大字段可设置为 false 不加入 select 查询范围
+     * <p>大字段可设置为 false 不加入 select 查询范围</p>
      */
     private boolean select = true;
+    /**
+     * 是否是乐观锁字段
+     */
+    private boolean version;
     /**
      * 逻辑删除值
      */
@@ -103,17 +130,15 @@ public class TableFieldInfo implements Constants {
     private String sqlSelect;
 
     /**
-     * <p>
      * 存在 TableField 注解时, 使用的构造函数
-     * </p>
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,
                           String column, String el, TableField tableField) {
+        this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.fieldFill = tableField.fill();
-        this.clazz = field.getDeclaringClass();
         this.update = tableField.update();
         this.el = el;
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
@@ -134,6 +159,30 @@ public class TableFieldInfo implements Constants {
         } else {
             this.fieldStrategy = tableField.strategy();
         }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
+            this.insertStrategy = dbConfig.getInsertStrategy();
+        } else {
+            this.insertStrategy = tableField.insertStrategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.updateStrategy() == FieldStrategy.DEFAULT) {
+            this.updateStrategy = dbConfig.getUpdateStrategy();
+        } else {
+            this.updateStrategy = tableField.updateStrategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.whereStrategy() == FieldStrategy.DEFAULT) {
+            this.whereStrategy = dbConfig.getSelectStrategy();
+        } else {
+            this.whereStrategy = tableField.whereStrategy();
+        }
 
         if (StringUtils.isNotEmpty(tableField.condition())) {
             // 细粒度条件控制
@@ -148,18 +197,19 @@ public class TableFieldInfo implements Constants {
     }
 
     /**
-     * <p>
      * 不存在 TableField 注解时, 使用的构造函数
-     * </p>
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
+        this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = field.getName();
         this.fieldStrategy = dbConfig.getFieldStrategy();
+        this.insertStrategy = dbConfig.getInsertStrategy();
+        this.updateStrategy = dbConfig.getUpdateStrategy();
+        this.whereStrategy = dbConfig.getSelectStrategy();
         this.setCondition(dbConfig);
-        this.clazz = field.getDeclaringClass();
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
         String column = field.getName();
@@ -171,14 +221,18 @@ public class TableFieldInfo implements Constants {
             /* 开启字段全大写申明 */
             column = column.toUpperCase();
         }
+
+        String columnFormat = dbConfig.getColumnFormat();
+        if (StringUtils.isNotEmpty(columnFormat)) {
+            column = String.format(columnFormat, column);
+        }
+
         this.column = column;
         this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
     }
 
     /**
-     * <p>
      * 逻辑删除初始化
-     * </p>
      *
      * @param dbConfig 数据库全局配置
      * @param field    字段属性对象
@@ -203,7 +257,7 @@ public class TableFieldInfo implements Constants {
     }
 
     /**
-     * 是否开启逻辑删除
+     * 是否注解了逻辑删除
      */
     public boolean isLogicDelete() {
         return StringUtils.isNotEmpty(logicDeleteValue);
@@ -211,7 +265,7 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 全局配置开启字段 LIKE 并且为字符串类型字段
-     * 注入 LIKE 查询！！！
+     * <p>注入 LIKE 查询！！！</p>
      */
     private void setCondition(GlobalConfig.DbConfig dbConfig) {
         if (null == condition || SqlCondition.EQUAL.equals(condition)) {
@@ -224,24 +278,23 @@ public class TableFieldInfo implements Constants {
     /**
      * 获取 select sql 片段
      *
-     * @param dbType 数据库类型
      * @return sql 片段
      */
-    public String getSqlSelect(DbType dbType) {
+    public String getSqlSelect() {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true);
+        sqlSelect = column;
         if (related) {
-            sqlSelect += (" AS " + SqlUtils.sqlWordConvert(dbType, getProperty(), false));
+            sqlSelect += (" AS " + property);
         }
         return sqlSelect;
     }
 
     /**
      * 获取 insert 时候插入值 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * <li> 不生成 if 标签 </li>
      *
@@ -254,8 +307,8 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 获取 insert 时候插入值 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * <li> 根据规则会生成 if 标签 </li>
      *
@@ -266,13 +319,13 @@ public class TableFieldInfo implements Constants {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property);
+        return convertIf(sqlScript, property, insertStrategy);
     }
 
     /**
      * 获取 insert 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * <li> 不生成 if 标签 </li>
      *
@@ -284,8 +337,8 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 获取 insert 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * <li> 根据规则会生成 if 标签 </li>
      *
@@ -296,7 +349,7 @@ public class TableFieldInfo implements Constants {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property);
+        return convertIf(sqlScript, property, insertStrategy);
     }
 
     /**
@@ -306,6 +359,17 @@ public class TableFieldInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getSqlSet(final String prefix) {
+        return getSqlSet(false, prefix);
+    }
+
+    /**
+     * 获取 set sql 片段
+     *
+     * @param ignoreIf 忽略 IF 包裹
+     * @param prefix   前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(final boolean ignoreIf, final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认: column=
         String sqlSet = column + EQUALS;
@@ -315,11 +379,14 @@ public class TableFieldInfo implements Constants {
             sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
         }
         sqlSet += COMMA;
+        if (ignoreIf) {
+            return sqlSet;
+        }
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, newPrefix + property);
+        return convertIf(sqlSet, newPrefix + property, updateStrategy);
     }
 
     /**
@@ -333,21 +400,26 @@ public class TableFieldInfo implements Constants {
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
-        return convertIf(sqlScript, newPrefix + property);
+        return convertIf(sqlScript, newPrefix + property, whereStrategy);
     }
 
     /**
      * 转换成 if 标签的脚本片段
      *
-     * @param sqlScript sql 脚本片段
-     * @param property  字段名
+     * @param sqlScript     sql 脚本片段
+     * @param property      字段名
+     * @param fieldStrategy 验证策略
      * @return if 脚本片段
      */
-    private String convertIf(final String sqlScript, final String property) {
-        if (fieldStrategy == FieldStrategy.IGNORED) {
+    private String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
+        final FieldStrategy targetStrategy = Optional.ofNullable(fieldStrategy).orElse(this.fieldStrategy);
+        if (targetStrategy == FieldStrategy.NEVER) {
+            return null;
+        }
+        if (targetStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }
-        if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
+        if (targetStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
             return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property),
                 false);
         }

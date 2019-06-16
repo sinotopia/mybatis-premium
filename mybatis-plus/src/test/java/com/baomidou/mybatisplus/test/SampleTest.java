@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2011-2019, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.test;
-
-import org.apache.ibatis.reflection.DefaultReflectorFactory;
-import org.apache.ibatis.reflection.MetaClass;
-import org.junit.Test;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -10,15 +21,14 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaClass;
+import org.junit.jupiter.api.Test;
 
-public class SampleTest {
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
+class SampleTest {
 
     @Test
-    public void testTableInfoHelper2() {
+    void testTableInfoHelper2() {
         TableInfo info = TableInfoHelper.initTableInfo(null, CommonLogicData.class);
 //        System.out.println("----------- AllInsertSqlColumn -----------");
 //        System.out.println(info.getAllInsertSqlColumn());
@@ -31,20 +41,20 @@ public class SampleTest {
     }
 
     @Test
-    public void testTableInfoHelper3() {
+    void testTableInfoHelper3() {
         MetaClass metaClass = MetaClass.forClass(CommonData.class, new DefaultReflectorFactory());
         String property = metaClass.findProperty("TESTINT", true);
         System.out.println(property);
     }
 
     @Test
-    public void testWrapperOrderBy() {
+    void testWrapperOrderBy() {
         System.out.println(Wrappers.query().orderByAsc("1", "2", "3", "4").getSqlSegment());
         System.out.println(Wrappers.query().orderByDesc("1", "2", "3", "4").getSqlSegment());
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         QueryWrapper<Object> wrapper = Wrappers.query().orderByAsc("1", "2", "3", "4");
         QueryWrapper<Object> clone = wrapper.clone().orderByDesc("5", "6", "7");
         System.out.println(wrapper.getSqlSegment());
@@ -52,7 +62,7 @@ public class SampleTest {
     }
 
     @Test
-    public void testPrefixOrder() {
+    void testPrefixOrder() {
         System.out.println(Wrappers.query().eq("order_id", 1).getSqlSegment());
     }
 }

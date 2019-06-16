@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -66,21 +66,24 @@ public class TableInfoHelper {
     /**
      * <p>
      * 获取实体映射表信息
-     * <p>
+     * </p>
      *
      * @param clazz 反射实体类
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null) {
+        if (clazz == null
+            || ReflectionKit.isPrimitiveOrWrapper(clazz)
+            || clazz == String.class) {
             return null;
         }
+        // https://github.com/baomidou/mybatis-plus/issues/299
         TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
         if (null != tableInfo) {
             return tableInfo;
         }
         //尝试获取父类缓存
-        Class currentClass = clazz;
+        Class<?> currentClass = clazz;
         while (null == tableInfo && Object.class != currentClass) {
             currentClass = currentClass.getSuperclass();
             tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
@@ -94,10 +97,11 @@ public class TableInfoHelper {
     /**
      * <p>
      * 获取所有实体映射表信息
-     * <p>
+     * </p>
      *
      * @return 数据库表反射信息集合
      */
+    @SuppressWarnings("unused")
     public static List<TableInfo> getTableInfos() {
         return new ArrayList<>(TABLE_INFO_CACHE.values());
     }
@@ -105,7 +109,7 @@ public class TableInfoHelper {
     /**
      * <p>
      * 实体类反射获取表信息【初始化】
-     * <p>
+     * </p>
      *
      * @param clazz 反射实体类
      * @return 数据库表反射信息
@@ -113,19 +117,18 @@ public class TableInfoHelper {
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz);
         if (tableInfo != null) {
-            if (tableInfo.getConfigMark() == null && builderAssistant != null) {
-                tableInfo.setConfigMark(builderAssistant.getConfiguration());
+            if (builderAssistant != null) {
+                tableInfo.setConfiguration(builderAssistant.getConfiguration());
             }
             return tableInfo;
         }
 
         /* 没有获取到缓存信息,则初始化 */
-        tableInfo = new TableInfo();
+        tableInfo = new TableInfo(clazz);
         GlobalConfig globalConfig;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-            tableInfo.setConfigMark(builderAssistant.getConfiguration());
-            tableInfo.setUnderCamel(builderAssistant.getConfiguration().isMapUnderscoreToCamelCase());
+            tableInfo.setConfiguration(builderAssistant.getConfiguration());
             globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
             // 兼容测试场景
@@ -138,11 +141,11 @@ public class TableInfoHelper {
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo);
 
+// todo 暂时不开放  tableInfo.initResultMapIfNeed();
+
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz, tableInfo);
 
-        /* 缓存 Lambda 映射关系 */
-        LambdaUtils.createCache(clazz, tableInfo);
         return tableInfo;
     }
 
@@ -155,45 +158,74 @@ public class TableInfoHelper {
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
      */
-    public static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
+    private static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        /* 设置数据库类型 */
-        tableInfo.setDbType(dbConfig.getDbType());
-
-        /* 设置表名 */
         TableName table = clazz.getAnnotation(TableName.class);
-        String tableName = clazz.getSimpleName();
-        if (table != null && StringUtils.isNotEmpty(table.value())) {
-            tableName = table.value();
-        } else {
-            // 开启表名下划线申明
-            if (dbConfig.isTableUnderline()) {
-                tableName = StringUtils.camelToUnderline(tableName);
-            }
-            // 大写命名判断
-            if (dbConfig.isCapitalMode()) {
-                tableName = tableName.toUpperCase();
-            } else {
-                // 首字母小写
-                tableName = StringUtils.firstToLowerCase(tableName);
-            }
-            // 存在表名前缀
-            if (null != dbConfig.getTablePrefix()) {
-                tableName = dbConfig.getTablePrefix() + tableName;
-            }
-        }
-        tableInfo.setTableName(tableName);
 
-        /* 表结果集映射 */
-        if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
-            tableInfo.setResultMap(table.resultMap());
+        String tableName = clazz.getSimpleName();
+        String tablePrefix = dbConfig.getTablePrefix();
+        String schema = dbConfig.getSchema();
+        boolean tablePrefixEffect = true;
+
+        if (table != null) {
+            if (StringUtils.isNotEmpty(table.value())) {
+                tableName = table.value();
+                if (StringUtils.isNotEmpty(tablePrefix) && !table.keepGlobalPrefix()) {
+                    tablePrefixEffect = false;
+                }
+            } else {
+                tableName = initTableNameWithDbConfig(tableName, dbConfig);
+            }
+            if (StringUtils.isNotEmpty(table.schema())) {
+                schema = table.schema();
+            }
+            /* 表结果集映射 */
+            if (StringUtils.isNotEmpty(table.resultMap())) {
+                tableInfo.setResultMap(table.resultMap());
+            }
+            tableInfo.setAutoInitResultMap(table.autoResultMap());
+        } else {
+            tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
+
+        String targetTableName = tableName;
+        if (StringUtils.isNotEmpty(tablePrefix) && tablePrefixEffect) {
+            targetTableName = tablePrefix + targetTableName;
+        }
+        if (StringUtils.isNotEmpty(schema)) {
+            targetTableName = schema + StringPool.DOT + targetTableName;
+        }
+
+        tableInfo.setTableName(targetTableName);
 
         /* 开启了自定义 KEY 生成器 */
         if (null != dbConfig.getKeyGenerator()) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
+    }
+
+    /**
+     * 根据 DbConfig 初始化 表名
+     *
+     * @param className 类名
+     * @param dbConfig  DbConfig
+     * @return 表名
+     */
+    private static String initTableNameWithDbConfig(String className, GlobalConfig.DbConfig dbConfig) {
+        String tableName = className;
+        // 开启表名下划线申明
+        if (dbConfig.isTableUnderline()) {
+            tableName = StringUtils.camelToUnderline(tableName);
+        }
+        // 大写命名判断
+        if (dbConfig.isCapitalMode()) {
+            tableName = tableName.toUpperCase();
+        } else {
+            // 首字母小写
+            tableName = StringUtils.firstToLowerCase(tableName);
+        }
+        return tableName;
     }
 
     /**
@@ -309,9 +341,9 @@ public class TableInfoHelper {
                     }
                 }
                 tableInfo.setKeyRelated(checkRelated(underCamel, field.getName(), column))
-                    .setClazz(field.getDeclaringClass())
                     .setKeyColumn(column)
-                    .setKeyProperty(field.getName());
+                    .setKeyProperty(field.getName())
+                    .setKeyType(field.getType());
                 return true;
             } else {
                 throwExceptionId(clazz);
@@ -342,7 +374,7 @@ public class TableInfoHelper {
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
                     .setKeyProperty(field.getName())
-                    .setClazz(field.getDeclaringClass());
+                    .setKeyType(field.getType());
                 return true;
             } else {
                 throwExceptionId(clazz);
@@ -370,8 +402,10 @@ public class TableInfoHelper {
             return false;
         }
         String columnName = field.getName();
+        boolean columnNameFromTableField = false;
         if (StringUtils.isNotEmpty(tableField.value())) {
             columnName = tableField.value();
+            columnNameFromTableField = true;
         }
         /*
          * el 语法支持，可以传入多个参数以逗号分开
@@ -381,6 +415,16 @@ public class TableInfoHelper {
             el = tableField.el();
         }
         String[] columns = columnName.split(StringPool.SEMICOLON);
+
+        String columnFormat = dbConfig.getColumnFormat();
+        if (StringUtils.isNotEmpty(columnFormat) && (!columnNameFromTableField || tableField.keepGlobalFormat())) {
+            for (int i = 0; i < columns.length; i++) {
+                String column = columns[i];
+                column = String.format(columnFormat, column);
+                columns[i] = column;
+            }
+        }
+
         String[] els = el.split(StringPool.SEMICOLON);
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {
@@ -420,16 +464,16 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 发现设置多个主键注解抛出异常
-     * </p>
      */
     private static void throwExceptionId(Class<?> clazz) {
         throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in %s", clazz.getName());
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      * @return 属性集合
@@ -448,9 +492,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 自定义 KEY 生成器
-     * </p>
      */
     public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
                                                String baseStatementId, LanguageDriver languageDriver) {

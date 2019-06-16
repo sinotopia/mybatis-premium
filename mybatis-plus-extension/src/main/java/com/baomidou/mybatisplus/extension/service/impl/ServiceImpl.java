@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2011-2016, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -20,10 +20,18 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+
 import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +46,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ， PK 是主键泛型 ）
- * </p>
  *
  * @author hubin
  * @since 2018-06-23
@@ -48,13 +54,18 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
+    protected Log log = LogFactory.getLog(getClass());
+
     @Autowired
     protected M baseMapper;
 
+    @Override
+    public M getBaseMapper() {
+        return baseMapper;
+    }
+
     /**
-     * <p>
      * 判断数据库操作是否成功
-     * </p>
      *
      * @param result 数据库操作返回影响条数
      * @return boolean
@@ -64,13 +75,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     protected Class<T> currentModelClass() {
-        return ReflectionKit.getSuperClassGenericType(getClass(), 1);
+        return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
     }
 
     /**
-     * <p>
      * 批量操作 SqlSession
-     * </p>
      */
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
@@ -86,16 +95,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * 获取SqlStatement
+     * 获取 SqlStatement
      *
-     * @param sqlMethod
-     * @return
+     * @param sqlMethod ignore
+     * @return ignore
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
         return retBool(baseMapper.insert(entity));
@@ -104,9 +112,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     /**
      * 批量插入
      *
-     * @param entityList
-     * @param batchSize
-     * @return
+     * @param entityList ignore
+     * @param batchSize ignore
+     * @return ignore
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -127,9 +135,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * <p>
      * TableId 注解存在更新记录，否插入一条记录
-     * </p>
      *
      * @param entity 实体对象
      * @return boolean
@@ -169,7 +175,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     param.put(Constants.ENTITY, entity);
                     batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 }
-                //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
+                // 不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
@@ -180,38 +186,32 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
-        return SqlHelper.delBool(baseMapper.deleteById(id));
+        return SqlHelper.retBool(baseMapper.deleteById(id));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
         Assert.notEmpty(columnMap, "error: columnMap must not be empty");
-        return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
+        return SqlHelper.retBool(baseMapper.deleteByMap(columnMap));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<T> wrapper) {
-        return SqlHelper.delBool(baseMapper.delete(wrapper));
+        return SqlHelper.retBool(baseMapper.delete(wrapper));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByIds(Collection<? extends Serializable> idList) {
-        return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
+        return SqlHelper.retBool(baseMapper.deleteBatchIds(idList));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
         return retBool(baseMapper.updateById(entity));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> updateWrapper) {
         return retBool(baseMapper.update(entity, updateWrapper));
@@ -258,12 +258,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (throwEx) {
             return baseMapper.selectOne(queryWrapper);
         }
-        return SqlHelper.getObject(baseMapper.selectList(queryWrapper));
+        return SqlHelper.getObject(log, baseMapper.selectList(queryWrapper));
     }
 
     @Override
     public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(baseMapper.selectMaps(queryWrapper));
+        return SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper));
     }
 
     @Override
@@ -294,5 +294,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper) {
         return baseMapper.selectMapsPage(page, queryWrapper);
+    }
+
+    @Override
+    public <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
+        return SqlHelper.getObject(log, listObjs(queryWrapper, mapper));
     }
 }
