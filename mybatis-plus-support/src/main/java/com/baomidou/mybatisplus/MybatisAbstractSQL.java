@@ -41,7 +41,6 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     private static final String OR_NEW = ") \nOR (";
     private static final Pattern pattern = Pattern.compile("[(|)|\\s]+");
 
-
     /**
      * SQL条件
      */
@@ -163,7 +162,6 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
         public boolean isEmpty() {
             return empty;
         }
-
     }
 
     /**

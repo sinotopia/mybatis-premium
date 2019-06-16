@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class DBTomcatjdbcH2Config {
 
-
     @Bean
     public DataSource dataSource() throws SQLException {
         PoolConfiguration configuration = new PoolProperties();

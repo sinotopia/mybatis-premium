@@ -112,7 +112,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     /**
      * 新增
      *
-     * @param insert
+     * @param insert insert
      */
     public abstract void processInsert(Insert insert);
 
@@ -126,14 +126,14 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     /**
      * 更新
      *
-     * @param update
+     * @param update update
      */
     public abstract void processUpdate(Update update);
 
     /**
      * 查询
      *
-     * @param selectBody
+     * @param selectBody selectBody
      */
     public abstract void processSelectBody(SelectBody selectBody);
 

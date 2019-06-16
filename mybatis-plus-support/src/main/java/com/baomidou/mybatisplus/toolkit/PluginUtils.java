@@ -61,7 +61,7 @@ public final class PluginUtils {
         Method[] methods = mapperClass.getDeclaredMethods();
         for (Method method : methods) {
             SqlParser sqlParser = method.getAnnotation(SqlParser.class);
-            if (null != sqlParser) {
+            if (null != sqlParser && sqlParser.filter()) {
                 StringBuilder sid = new StringBuilder();
                 sid.append(mapperClass.getName()).append(".").append(method.getName());
                 sqlParserInfoCache.put(sid.toString(), new SqlParserInfo(sqlParser));

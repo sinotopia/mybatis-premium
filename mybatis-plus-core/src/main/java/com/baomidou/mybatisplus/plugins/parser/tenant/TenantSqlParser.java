@@ -56,6 +56,14 @@ public class TenantSqlParser extends AbstractJsqlParser {
 
     private TenantHandler tenantHandler;
 
+    public TenantHandler getTenantHandler() {
+        return tenantHandler;
+    }
+
+    public void setTenantHandler(TenantHandler tenantHandler) {
+        this.tenantHandler = tenantHandler;
+    }
+
     /**
      * select 语句处理
      */
@@ -289,11 +297,4 @@ public class TenantSqlParser extends AbstractJsqlParser {
         return new Column(column.toString());
     }
 
-    public TenantHandler getTenantHandler() {
-        return tenantHandler;
-    }
-
-    public void setTenantHandler(TenantHandler tenantHandler) {
-        this.tenantHandler = tenantHandler;
-    }
 }

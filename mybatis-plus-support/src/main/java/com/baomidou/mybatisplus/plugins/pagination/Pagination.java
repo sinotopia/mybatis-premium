@@ -76,6 +76,7 @@ public class Pagination extends RowBounds implements Serializable {
      * </p>
      */
     private List<String> ascs;
+
     /**
      * <p>
      * SQL 排序 DESC 集合

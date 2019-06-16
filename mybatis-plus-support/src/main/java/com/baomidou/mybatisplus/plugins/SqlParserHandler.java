@@ -39,6 +39,23 @@ public abstract class SqlParserHandler {
     private List<ISqlParser> sqlParserList;
     private ISqlParserFilter sqlParserFilter;
 
+    public List<ISqlParser> getSqlParserList() {
+        return sqlParserList;
+    }
+
+    public SqlParserHandler setSqlParserList(List<ISqlParser> sqlParserList) {
+        this.sqlParserList = sqlParserList;
+        return this;
+    }
+
+    public ISqlParserFilter getSqlParserFilter() {
+        return sqlParserFilter;
+    }
+
+    public void setSqlParserFilter(ISqlParserFilter sqlParserFilter) {
+        this.sqlParserFilter = sqlParserFilter;
+    }
+
     /**
      * 拦截 SQL 解析执行
      */
@@ -71,20 +88,4 @@ public abstract class SqlParserHandler {
         }
     }
 
-    public List<ISqlParser> getSqlParserList() {
-        return sqlParserList;
-    }
-
-    public SqlParserHandler setSqlParserList(List<ISqlParser> sqlParserList) {
-        this.sqlParserList = sqlParserList;
-        return this;
-    }
-
-    public ISqlParserFilter getSqlParserFilter() {
-        return sqlParserFilter;
-    }
-
-    public void setSqlParserFilter(ISqlParserFilter sqlParserFilter) {
-        this.sqlParserFilter = sqlParserFilter;
-    }
 }
