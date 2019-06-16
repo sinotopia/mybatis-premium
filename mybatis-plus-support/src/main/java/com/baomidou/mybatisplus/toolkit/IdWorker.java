@@ -24,7 +24,7 @@ import java.util.UUID;
  * </p>
  *
  * @author hubin
- * @Date 2016-08-01
+ * @date 2016-08-01
  */
 public class IdWorker {
 

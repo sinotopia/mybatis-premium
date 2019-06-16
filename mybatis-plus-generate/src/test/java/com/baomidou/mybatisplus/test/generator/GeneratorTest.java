@@ -9,7 +9,7 @@ import java.util.Scanner;
  * </p>
  *
  * @author hubin
- * @Date 2018-01-11
+ * @date 2018-01-11
  */
 public class GeneratorTest {
 

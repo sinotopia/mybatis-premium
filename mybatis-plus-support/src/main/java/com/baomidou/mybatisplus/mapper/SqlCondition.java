@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.mapper;
  * </p>
  *
  * @author hubin
- * @Date 2018-01-05
+ * @date 2018-01-05
  */
 public class SqlCondition {
 

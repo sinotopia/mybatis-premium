@@ -53,7 +53,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * </p>
  *
  * @author hubin
- * @Date 2016-03-11
+ * @date 2016-03-11
  */
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 

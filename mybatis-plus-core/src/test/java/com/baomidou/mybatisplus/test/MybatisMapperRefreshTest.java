@@ -33,10 +33,9 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
  * </p>
  *
  * @author nieqiurong
- * @Date 2016-08-25
+ * @date 2016-08-25
  */
 public class MybatisMapperRefreshTest extends CrudTest {
-
 
     /**
      * 测试 Mybatis XML 修改自动刷新

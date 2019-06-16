@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * </p>
  *
  * @author yanghu , Caratacus , hubin
- * @Date 2016-08-22
+ * @date 2016-08-22
  */
 @SuppressWarnings("serial")
 public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {

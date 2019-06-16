@@ -48,7 +48,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * </p>
  *
  * @author hubin
- * @Date 2016-04-20
+ * @date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 

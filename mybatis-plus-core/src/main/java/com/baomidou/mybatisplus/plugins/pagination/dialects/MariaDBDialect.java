@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  * </p>
  *
  * @author Caratacus
- * @Date 2018-04-24
+ * @date 2018-04-24
  */
 public class MariaDBDialect implements IDialect {
 

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.baomidou.mybatisplus.annotations.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -36,10 +37,6 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.annotations.KeySequence;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
@@ -63,7 +60,7 @@ public class TableInfoHelper {
     /**
      * 缓存反射类表信息
      */
-    private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
+    private static final Map<String, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 默认表主键
@@ -76,10 +73,10 @@ public class TableInfoHelper {
      * <p>
      *
      * @param clazz 反射实体类
-     * @return
+     * @return TableInfo
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        TableInfo tableInfo = tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
         if (tableInfo != null) {
             return tableInfo;
         } else {
@@ -87,10 +84,10 @@ public class TableInfoHelper {
             Class currentClass = clazz;
             while (tableInfo == null && Object.class != currentClass) {
                 currentClass = currentClass.getSuperclass();
-                tableInfo = tableInfoCache.get(ClassUtils.getUserClass(currentClass).getName());
+                tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass).getName());
             }
             if (tableInfo != null) {
-                tableInfoCache.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
+                TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
             }
         }
         return tableInfo;
@@ -101,10 +98,10 @@ public class TableInfoHelper {
      * 获取所有实体映射表信息
      * <p>
      *
-     * @return
+     * @return TableInfo
      */
     public static List<TableInfo> getTableInfos() {
-        return new ArrayList<>(tableInfoCache.values());
+        return new ArrayList<>(TABLE_INFO_CACHE.values());
     }
 
     /**
@@ -112,11 +109,12 @@ public class TableInfoHelper {
      * 实体类反射获取表信息【初始化】
      * <p>
      *
+     * @param builderAssistant builderAssistant
      * @param clazz 反射实体类
-     * @return
+     * @return TableInfo
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        TableInfo tableInfo = tableInfoCache.get(clazz.getName());
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
         if (StringUtils.checkValNotNull(tableInfo)) {
             if (StringUtils.checkValNotNull(builderAssistant)) {
                 tableInfo.setConfigMark(builderAssistant.getConfiguration());
@@ -134,8 +132,8 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.DEFAULT;
         }
         /* 表名 */
-        TableName table = clazz.getAnnotation(TableName.class);
         String tableName = clazz.getSimpleName();
+        TableName table = clazz.getAnnotation(TableName.class);
         if (table != null && StringUtils.isNotEmpty(table.value())) {
             tableName = table.value();
         } else {
@@ -166,6 +164,18 @@ public class TableInfoHelper {
         if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
             tableInfo.setResultMap(table.resultMap());
         }
+        // 多租户策略配置
+        // TODO
+        if(globalConfig.isMultitenancy()){
+            Multitenancy multitenancy = clazz.getAnnotation(Multitenancy.class);
+            if(multitenancy!=null){
+                tableInfo.setMultitenancyStrategy(multitenancy.strategy());
+            }else {
+                if (null != globalConfig.getMultitenancyStrategy()) {
+                    tableInfo.setMultitenancyStrategy(globalConfig.getMultitenancyStrategy());
+                }
+            }
+        }
         List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
@@ -184,8 +194,8 @@ public class TableInfoHelper {
                 if (isReadPK) {
                     continue;
                 }
-
             }
+
             /*
              * 字段初始化
              */
@@ -210,7 +220,7 @@ public class TableInfoHelper {
         /*
          * 注入
          */
-        tableInfoCache.put(clazz.getName(), tableInfo);
+        TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
         return tableInfo;
     }
 
@@ -220,7 +230,7 @@ public class TableInfoHelper {
      * </p>
      *
      * @param list 字段列表
-     * @return
+     * @return existTableId
      */
     public static boolean existTableId(List<Field> list) {
         boolean exist = false;
@@ -239,9 +249,10 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param tableInfo
-     * @param field
-     * @param clazz
+     * @param globalConfig  globalConfig
+     * @param tableInfo tableInfo
+     * @param field field
+     * @param clazz clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
@@ -289,9 +300,10 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param tableInfo
-     * @param field
-     * @param clazz
+     * @param globalConfig  globalConfig
+     * @param tableInfo tableInfo
+     * @param field field
+     * @param clazz clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
@@ -335,8 +347,8 @@ public class TableInfoHelper {
      * @param clazz        当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
-                                          Field field, Class<?> clazz) {
+    private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo,
+                                          List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
         if (tableField != null) {
@@ -370,7 +382,7 @@ public class TableInfoHelper {
      * 获取该类的所有属性列表
      *
      * @param clazz 反射类
-     * @return
+     * @return Field  List<Field>
      */
     public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
@@ -391,8 +403,7 @@ public class TableInfoHelper {
     /**
      * 初始化SqlSessionFactory (供Mybatis原生调用)
      *
-     * @param sqlSessionFactory
-     * @return
+     * @param sqlSessionFactory sqlSessionFactory
      */
     public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         Configuration configuration = sqlSessionFactory.getConfiguration();

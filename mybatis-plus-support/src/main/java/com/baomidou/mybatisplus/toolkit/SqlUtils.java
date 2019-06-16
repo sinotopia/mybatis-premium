@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-11-13
+ * @date 2016-11-13
  */
 public class SqlUtils {
 

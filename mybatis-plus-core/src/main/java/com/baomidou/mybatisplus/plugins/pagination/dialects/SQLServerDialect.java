@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  * </p>
  *
  * @author hubin
- * @Date 2016-03-23
+ * @date 2016-03-23
  */
 public class SQLServerDialect implements IDialect {
 

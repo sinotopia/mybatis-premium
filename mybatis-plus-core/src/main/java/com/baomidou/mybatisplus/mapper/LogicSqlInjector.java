@@ -34,7 +34,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * </p>
  *
  * @author hubin willenfoo
- * @Date 2017-09-09
+ * @date 2017-09-09
  */
 public class LogicSqlInjector extends AutoSqlInjector {
 

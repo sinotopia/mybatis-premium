@@ -17,10 +17,12 @@ package com.baomidou.mybatisplus.entity;
 
 import java.lang.reflect.Field;
 
+import com.baomidou.mybatisplus.annotations.MultiTenancyColumn;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 import com.baomidou.mybatisplus.mapper.SqlCondition;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -31,7 +33,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * </p>
  *
  * @author hubin sjy willenfoo tantan
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 public class TableFieldInfo {
 
@@ -94,12 +96,17 @@ public class TableFieldInfo {
     private FieldFill fieldFill = FieldFill.DEFAULT;
 
     /**
+     * 是否是多租户列
+     */
+    private boolean multiTenancyColumn = false;
+
+    /**
      * <p>
      * 存在 TableField 注解构造函数
      * </p>
      */
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column,
-                          String el, Field field, TableField tableField) {
+    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo,
+                          String column, String el, Field field, TableField tableField) {
         this.property = field.getName();
         this.propertyType = field.getType();
         /*
@@ -134,6 +141,8 @@ public class TableFieldInfo {
          * 保存当前字段的填充策略
          */
         this.fieldFill = tableField.fill();
+        // 保存该列是否是多租户列
+        this.multiTenancyColumn = this.initMultiTenancy(globalConfig,field);
     }
 
     public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
@@ -180,6 +189,28 @@ public class TableFieldInfo {
             return true;
         }
         return false;
+    }
+
+    /**
+     * <p>
+     * 多租户相关设置
+     * </p>
+     *
+     * @param globalConfig 全局配置
+     * @param field        字段属性对象
+     */
+    private boolean initMultiTenancy(GlobalConfiguration globalConfig, Field field) {
+        if (globalConfig.isMultitenancy()) {
+            // 未设置多租户不进行
+            return false;
+        }
+        if(!MultitenancyStrategy.COLUMN.equals(globalConfig.getMultitenancyStrategy())){
+            // 非列策略不进行
+            return false;
+        }
+        /* 获取注解属性，多租户字段 */
+        MultiTenancyColumn multiTenancyColumn = field.getAnnotation(MultiTenancyColumn.class);
+        return multiTenancyColumn!=null;
     }
 
     public boolean isRelated() {
@@ -280,5 +311,13 @@ public class TableFieldInfo {
 
     public void setFieldFill(FieldFill fieldFill) {
         this.fieldFill = fieldFill;
+    }
+
+    public boolean isMultiTenancyColumn() {
+        return multiTenancyColumn;
+    }
+
+    public void setMultiTenancyColumn(boolean multiTenancyColumn) {
+        this.multiTenancyColumn = multiTenancyColumn;
     }
 }

@@ -30,7 +30,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * </p>
  *
  * @author yanghu
- * @Date 2016-08-22
+ * @date 2016-08-22
  */
 @SuppressWarnings("serial")
 public abstract class MybatisAbstractSQL<T> implements Serializable {

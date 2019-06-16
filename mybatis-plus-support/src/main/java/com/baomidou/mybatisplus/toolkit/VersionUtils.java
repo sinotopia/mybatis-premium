@@ -8,16 +8,15 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-12-5
+ * @since  2016-12-5
  */
 public class VersionUtils {
 
     /**
      * 比较版本号的大小,前者大则返回一个正数,后者大返回一个负数,相等则返回0
      *
-     * @param version1
-     * @param version2
-     * @return
+     * @param version1 version1
+     * @param version2 version2
      */
     public static int compareVersion(String version1, String version2) {
         if (StringUtils.isEmpty(version1) || StringUtils.isEmpty(version2)) {
@@ -43,8 +42,8 @@ public class VersionUtils {
     /**
      * 比较版本号 true
      *
-     * @param version1
-     * @param version2
+     * @param version1 version1
+     * @param version2 version2
      * @return boolean true v1>=v2 false相反
      */
     public static boolean compare(String version1, String version2) {

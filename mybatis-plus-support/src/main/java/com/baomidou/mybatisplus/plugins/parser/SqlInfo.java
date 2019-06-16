@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.plugins.parser;
  * </p>
  *
  * @author hubin
- * @Date 2017-06-20
+ * @date 2017-06-20
  */
 public class SqlInfo {
 

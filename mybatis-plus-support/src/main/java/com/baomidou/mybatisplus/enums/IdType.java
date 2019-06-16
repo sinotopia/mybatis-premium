@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.enums;
  * </p>
  *
  * @author hubin
- * @Date 2015-11-10
+ * @since  2015-11-10
  */
 public enum IdType {
 

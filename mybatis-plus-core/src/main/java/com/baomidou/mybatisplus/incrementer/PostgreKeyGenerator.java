@@ -6,7 +6,7 @@ package com.baomidou.mybatisplus.incrementer;
  * </p>
  *
  * @author Caratacus
- * @Date 2017-06-12
+ * @date 2017-06-12
  */
 public class PostgreKeyGenerator implements IKeyGenerator {
 

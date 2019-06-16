@@ -75,7 +75,7 @@ public final class PluginUtils {
      * </p>
      *
      * @param metaObject 元数据对象
-     * @return
+     * @return SqlParserInfo
      */
     public static SqlParserInfo getSqlParserInfo(MetaObject metaObject) {
         return sqlParserInfoCache.get(getMappedStatement(metaObject).getId());
@@ -87,7 +87,7 @@ public final class PluginUtils {
      * </p>
      *
      * @param metaObject 元对象
-     * @return
+     * @return MappedStatement
      */
     public static MappedStatement getMappedStatement(MetaObject metaObject) {
         return (MappedStatement) metaObject.getValue(DELEGATE_MAPPEDSTATEMENT);

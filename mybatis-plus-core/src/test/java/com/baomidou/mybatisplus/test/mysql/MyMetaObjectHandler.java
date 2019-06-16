@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
  * </p>
  *
  * @author hubin
- * @Date 2016-08-28
+ * @date 2016-08-28
  */
 public class MyMetaObjectHandler extends MetaObjectHandler {
 

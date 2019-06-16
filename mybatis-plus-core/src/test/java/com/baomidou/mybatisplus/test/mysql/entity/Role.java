@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * </p>
  *
  * @author sjy
- * @Date 2016-09-09
+ * @date 2016-09-09
  */
 @TableName(resultMap = "RoleMap")
 public class Role implements Serializable {

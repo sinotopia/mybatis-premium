@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.entity;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.annotations.KeySequence;
@@ -29,7 +30,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 public class TableInfo {
 
@@ -94,12 +95,20 @@ public class TableInfo {
     private boolean logicDelete = false;
 
     /**
+     * 多租户策略，当
+     * 仅当MultiTenantType = {@code MultitenancyStrategy.TABLE} 或
+     * MultiTenantType = {@code MultitenancyStrategy.COLUMN}
+     * 时有效
+     */
+    private MultitenancyStrategy multitenancyStrategy= MultitenancyStrategy.NONE;
+
+    /**
      * <p>
      * 获得注入的 SQL Statement
      * </p>
      *
      * @param sqlMethod MybatisPlus 支持 SQL 方法
-     * @return
+     * @return statement
      */
     public String getSqlStatement(String sqlMethod) {
         StringBuilder statement = new StringBuilder();
@@ -209,5 +218,13 @@ public class TableInfo {
 
     public void setLogicDelete(boolean logicDelete) {
         this.logicDelete = logicDelete;
+    }
+
+    public MultitenancyStrategy getMultitenancyStrategy() {
+        return multitenancyStrategy;
+    }
+
+    public void setMultitenancyStrategy(MultitenancyStrategy multitenancyStrategy) {
+        this.multitenancyStrategy = multitenancyStrategy;
     }
 }

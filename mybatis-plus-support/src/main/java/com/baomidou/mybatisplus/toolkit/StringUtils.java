@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * </p>
  *
  * @author D.Yang
- * @Date 2016-08-18
+ * @date 2016-08-18
  */
 public class StringUtils {
 
@@ -62,7 +62,6 @@ public class StringUtils {
 
     private static boolean separatorBeforeDigit = false;
     private static boolean separatorAfterDigit = true;
-
 
     private StringUtils() {
     }

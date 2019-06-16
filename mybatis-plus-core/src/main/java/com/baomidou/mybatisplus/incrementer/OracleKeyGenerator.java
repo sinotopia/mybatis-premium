@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.incrementer;
  * </p>
  *
  * @author hubin
- * @Date 2017-05-08
+ * @date 2017-05-08
  */
 public class OracleKeyGenerator implements IKeyGenerator {
 

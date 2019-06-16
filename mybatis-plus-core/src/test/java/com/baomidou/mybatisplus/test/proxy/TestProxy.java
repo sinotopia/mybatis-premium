@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.test.proxy.mapper.UserMapperImpl;
  * </p>
  *
  * @author hubin
- * @Date 2016-07-06
+ * @date 2016-07-06
  */
 public class TestProxy {
 

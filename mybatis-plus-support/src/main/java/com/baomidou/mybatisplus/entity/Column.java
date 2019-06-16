@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * </p>
  *
  * @author Caratacus
- * @Date 2017-04-27
+ * @date 2017-04-27
  */
 public class Column implements Serializable {
 
@@ -44,9 +44,11 @@ public class Column implements Serializable {
 
     //转义
     private boolean escape = true;
-    //字段
+
+    // 字段
     private String column;
-    //AS
+
+    // AS
     private String as;
 
     public String getColumn() {

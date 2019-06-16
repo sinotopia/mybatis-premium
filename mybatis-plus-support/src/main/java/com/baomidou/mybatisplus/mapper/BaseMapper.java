@@ -32,7 +32,7 @@ import org.apache.ibatis.session.RowBounds;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @date 2016-01-23
  */
 public interface BaseMapper<T> {
 

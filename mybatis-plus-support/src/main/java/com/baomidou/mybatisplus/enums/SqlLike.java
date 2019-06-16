@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.enums;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-12-4
+ * @date 2016-12-4
  */
 public enum SqlLike {
 

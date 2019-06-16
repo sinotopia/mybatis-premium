@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
  * </p>
  *
  * @author hubin
- * @Date 2016-07-23
+ * @date 2016-07-23
  */
 public class MySqlInjector extends AutoSqlInjector {
 

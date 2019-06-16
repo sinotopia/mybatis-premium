@@ -38,7 +38,7 @@ import org.mybatis.spring.SqlSessionUtils;
  * </p>
  *
  * @author hubin
- * @Date 2016-11-06
+ * @date 2016-11-06
  */
 public class SqlHelper {
 

@@ -30,24 +30,24 @@ public interface LogicDeleteHandler {
     /**
      * 获取逻辑删除列值
      *
-     * @param tableName
-     * @return
+     * @param tableName tableName
+     * @return Expression
      */
     Expression getValue(String tableName);
 
     /**
      * 获取逻辑删除列名
      *
-     * @param tableName
-     * @return
+     * @param tableName tableName
+     * @return String
      */
     String getColumn(String tableName);
 
     /**
      * 表过滤
      *
-     * @param tableName
-     * @return
+     * @param tableName tableName
+     * @return doTableFilter
      */
     boolean doTableFilter(String tableName);
 }

@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * </p>
  *
  * @author nieqiurong
- * @Date 2016-12-05
+ * @date 2016-12-05
  */
 public class JdbcUtils {
 

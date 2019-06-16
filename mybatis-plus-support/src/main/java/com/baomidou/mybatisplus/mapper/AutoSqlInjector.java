@@ -77,8 +77,8 @@ public class AutoSqlInjector implements ISqlInjector {
      * CRUD 注入后给予标识 注入过后不再注入
      * </p>
      *
-     * @param builderAssistant
-     * @param mapperClass
+     * @param builderAssistant builderAssistant
+     * @param mapperClass mapperClass
      */
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
@@ -95,8 +95,8 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     @Override
     public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
+        this.configuration = builderAssistant.getConfiguration();
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
 
         //去除 驼峰设置 PLUS 配置 > 原生配置 (该配置不需要与原生Mybatis混淆)
@@ -121,10 +121,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入SQL
      * </p>
      *
-     * @param builderAssistant
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param builderAssistant builderAssistant
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSql(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         /**
@@ -167,7 +167,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
         this.injectSelectObjsSql(SqlMethod.SELECT_OBJS, mapperClass, modelClass, table);
-        /** 自定义方法 */
+        // 自定义方法
         this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
     }
 
@@ -182,8 +182,8 @@ public class AutoSqlInjector implements ISqlInjector {
     /**
      * 提取泛型模型,多泛型的时候请将泛型T放在第一位
      *
-     * @param mapperClass
-     * @return
+     * @param mapperClass mapperClass
+     * @return mapperClass
      */
     protected Class<?> extractModelClass(Class<?> mapperClass) {
         Type[] types = mapperClass.getGenericInterfaces();
@@ -214,9 +214,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param selective   是否选择插入
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectInsertOneSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         /*
@@ -289,9 +289,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入 entity 条件删除 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectDeleteSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.DELETE;
@@ -305,8 +305,8 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入 map 条件删除 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param table table
      */
     protected void injectDeleteByMapSql(Class<?> mapperClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BY_MAP;
@@ -319,10 +319,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * <p>
      * 注入删除 SQL 语句
      * </p>
-     *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param batch  batch
+     * @param mapperClass mapperClass
+     * @param modelClass  modelClass
+     * @param table table
      */
     protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
@@ -347,9 +347,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入更新 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param selective selective
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
@@ -370,9 +371,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入批量更新 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectUpdateSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.UPDATE;
@@ -386,9 +387,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入批量更新 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectUpdateForSetSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_FOR_SET;
@@ -403,9 +404,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param batch       是否为批量插入
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
@@ -430,9 +431,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入 map 查询 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectByMapSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.SELECT_BY_MAP;
@@ -446,9 +447,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入实体查询一条记录 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectOneSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
@@ -462,10 +463,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入EntityWrapper方式查询记录列表 SQL 语句
      * </p>
      *
-     * @param sqlMethod
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param sqlMethod sqlMethod
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectListSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(),
@@ -479,10 +480,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入EntityWrapper方式查询记录列表 SQL 语句
      * </p>
      *
-     * @param sqlMethod
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param sqlMethod sqlMethod
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectMapsSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(),
@@ -496,10 +497,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入EntityWrapper方式查询记录列表 SQL 语句
      * </p>
      *
-     * @param sqlMethod
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param sqlMethod sqlMethod
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectObjsSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         String sql = String.format(sqlMethod.getSql(), sqlSelectObjsColumns(table), table.getTableName(),
@@ -513,9 +514,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入EntityWrapper查询总记录数 SQL 语句
      * </p>
      *
-     * @param mapperClass
-     * @param modelClass
-     * @param table       表信息
+     * @param mapperClass mapperClass
+     * @param modelClass modelClass
+     * @param table table
      */
     protected void injectSelectCountSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
@@ -574,7 +575,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @param selective 是否选择判断
      * @param table     表信息
      * @param prefix    前缀
-     * @return
+     * @return String
      */
     protected String sqlSet(boolean selective, TableInfo table, String prefix) {
         StringBuilder set = new StringBuilder();
@@ -618,7 +619,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * SQL 自定义更新 set 语句
      * </p>
      *
-     * @return
+     * @return String
      */
     protected String customSqlSet() {
         StringBuilder set = new StringBuilder();
@@ -633,8 +634,8 @@ public class AutoSqlInjector implements ISqlInjector {
      * 获取需要转义的SQL字段
      * </p>
      *
-     * @param convertStr
-     * @return
+     * @param convertStr convertStr
+     * @return String
      */
     protected String sqlWordConvert(String convertStr) {
         GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
@@ -646,9 +647,9 @@ public class AutoSqlInjector implements ISqlInjector {
      * SQL 查询所有表字段
      * </p>
      *
-     * @param table
+     * @param table table
      * @param entityWrapper 是否为包装类型查询
-     * @return
+     * @return String
      */
     protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
         StringBuilder columns = new StringBuilder();
@@ -727,7 +728,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param table 是否为包装类型查询
-     * @return
+     * @return String
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
         StringBuilder columns = new StringBuilder();
@@ -944,8 +945,8 @@ public class AutoSqlInjector implements ISqlInjector {
     /**
      * 是否已经存在MappedStatement
      *
-     * @param mappedStatement
-     * @return
+     * @param mappedStatement mappedStatement
+     * @return hasMappedStatement
      */
     private boolean hasMappedStatement(String mappedStatement) {
         return configuration.hasStatement(mappedStatement, false);
@@ -954,7 +955,7 @@ public class AutoSqlInjector implements ISqlInjector {
     /**
      * 创建查询MappedStatement
      *
-     * @param mappedStatement
+     * @param mappedStatement mappedStatement
      * @param sqlSource       执行的sqlSource
      * @param resultType      返回的结果类型
      */
@@ -974,7 +975,7 @@ public class AutoSqlInjector implements ISqlInjector {
     /**
      * 创建一个MappedStatement
      *
-     * @param mappedStatement
+     * @param mappedStatement mappedStatement
      * @param sqlSource       执行的sqlSource
      * @param sqlCommandType  执行的sqlCommandType
      */

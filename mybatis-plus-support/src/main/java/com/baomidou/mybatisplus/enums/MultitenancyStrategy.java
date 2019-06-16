@@ -1,5 +1,7 @@
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.enums;
 
+
+import com.baomidou.mybatisplus.annotations.MultiTenancyColumn;
 
 /**
  * 租户数据隔离策略

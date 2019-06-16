@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  * </p>
  *
  * @author hubin
- * @Date 2016-11-10
+ * @date 2016-11-10
  */
 public class H2Dialect implements IDialect {
 

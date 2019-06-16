@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * </p>
  *
  * @author hubin
- * @Date 2016-08-01
+ * @date 2016-08-01
  */
 public class SystemClock {
 

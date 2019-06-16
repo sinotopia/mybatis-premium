@@ -33,7 +33,9 @@ import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
  */
 public class GlobalConfigUtils {
 
-    // 日志
+    /**
+     *  日志
+     */
     private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 默认参数
@@ -54,7 +56,7 @@ public class GlobalConfigUtils {
      * </p>
      *
      * @param clazz 实体类
-     * @return
+     * @return SqlSessionFactory
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
@@ -71,7 +73,7 @@ public class GlobalConfigUtils {
      * 获取默认MybatisGlobalConfig
      * </p>
      *
-     * @return
+     * @return GlobalConfiguration
      */
     public static GlobalConfiguration defaults() {
         return new GlobalConfiguration();

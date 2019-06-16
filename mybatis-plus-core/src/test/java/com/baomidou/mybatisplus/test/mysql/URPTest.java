@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * </p>
  *
  * @author junyu
- * @Date 2016-09-09
+ * @date 2016-09-09
  */
 public class URPTest extends CrudTest {
 

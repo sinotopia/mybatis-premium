@@ -35,7 +35,7 @@ import com.baomidou.mybatisplus.test.oracle.mapper.TestUserMapper;
  * </p>
  *
  * @author hubin
- * @Date 2016-04-25
+ * @date 2016-04-25
  */
 public class TestUserMapperTest {
 

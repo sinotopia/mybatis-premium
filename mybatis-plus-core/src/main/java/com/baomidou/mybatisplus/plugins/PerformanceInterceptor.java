@@ -52,7 +52,7 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
  * </p>
  *
  * @author hubin nieqiurong TaoYu
- * @Date 2016-07-07
+ * @since  2016-07-07
  */
 @Intercepts({
     @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
@@ -97,7 +97,8 @@ public class PerformanceInterceptor implements Interceptor {
         } catch (Exception e) {
             // do nothing
         }
-        if (stmtMetaObj.hasGetter("delegate")) {//Hikari
+        if (stmtMetaObj.hasGetter("delegate")) {
+            //Hikari
             try {
                 statement = (Statement) stmtMetaObj.getValue("delegate");
             } catch (Exception e) {
@@ -131,7 +132,8 @@ public class PerformanceInterceptor implements Interceptor {
                     Class<?> clazz = Class.forName(stmtClassName);
                     oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
                     if (oracleGetOriginalSqlMethod != null) {
-                        oracleGetOriginalSqlMethod.setAccessible(true);//OraclePreparedStatementWrapper is not a public class, need set this.
+                        //OraclePreparedStatementWrapper is not a public class, need set this.
+                        oracleGetOriginalSqlMethod.setAccessible(true);
                         if (oracleGetOriginalSqlMethod != null) {
                             Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
                             if (stmtSql != null && stmtSql instanceof String) {

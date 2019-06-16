@@ -35,25 +35,25 @@ import net.sf.jsqlparser.expression.StringValue;
  * @author willenfoo
  * @since 2018-03-09
  */
-public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
+public class DefaultLogicDeleteHandler implements LogicDeleteHandler {
 
     /**
      * 缓存表名与逻辑删除字段的映射
      */
-    private static final Map<String, TableFieldInfo> tableLogicDeleteMap = new ConcurrentHashMap<String, TableFieldInfo>();
+    private static final Map<String, TableFieldInfo> TABLE_LOGIC_DELETE_MAP = new ConcurrentHashMap<String, TableFieldInfo>();
 
-    public LogicDeleteDefaultHandler() {
+    public DefaultLogicDeleteHandler() {
         init();
     }
 
     private void init() {
-        if (tableLogicDeleteMap.isEmpty()) {
+        if (TABLE_LOGIC_DELETE_MAP.isEmpty()) {
             List<TableInfo> tableInfos = TableInfoHelper.getTableInfos();
             for (TableInfo tableInfo : tableInfos) {
                 List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
                 for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
                     if (tableFieldInfo.isLogicDelete()) {
-                        tableLogicDeleteMap.put(tableInfo.getTableName(), tableFieldInfo);
+                        TABLE_LOGIC_DELETE_MAP.put(tableInfo.getTableName(), tableFieldInfo);
                         break;
                     }
                 }
@@ -64,22 +64,22 @@ public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
     @Override
     public Expression getValue(String tableName) {
         init();
-        if (String.class.equals(tableLogicDeleteMap.get(tableName).getPropertyType())) {
-            return new StringValue(tableLogicDeleteMap.get(tableName).getLogicNotDeleteValue());
+        if (String.class.equals(TABLE_LOGIC_DELETE_MAP.get(tableName).getPropertyType())) {
+            return new StringValue(TABLE_LOGIC_DELETE_MAP.get(tableName).getLogicNotDeleteValue());
         } else {
-            return new LongValue(tableLogicDeleteMap.get(tableName).getLogicNotDeleteValue());
+            return new LongValue(TABLE_LOGIC_DELETE_MAP.get(tableName).getLogicNotDeleteValue());
         }
     }
 
     @Override
     public String getColumn(String tableName) {
         init();
-        return tableLogicDeleteMap.get(tableName).getColumn();
+        return TABLE_LOGIC_DELETE_MAP.get(tableName).getColumn();
     }
 
     @Override
     public boolean doTableFilter(String tableName) {
         init();
-        return !tableLogicDeleteMap.containsKey(tableName);
+        return !TABLE_LOGIC_DELETE_MAP.containsKey(tableName);
     }
 }

@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
  * </p>
  *
  * @author hubin
- * @Date 2016-03-01
+ * @date 2016-03-01
  */
 public class Page<T> extends Pagination {
 

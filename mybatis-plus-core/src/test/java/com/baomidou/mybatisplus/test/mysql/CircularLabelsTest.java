@@ -34,7 +34,7 @@ import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-12-21
+ * @date 2016-12-21
  */
 public class CircularLabelsTest extends CrudTest {
 

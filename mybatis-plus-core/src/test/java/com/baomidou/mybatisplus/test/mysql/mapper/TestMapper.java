@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.test.mysql.entity.Test;
  * </p>
  *
  * @author Caratacus hubin
- * @Date 2016-09-25
+ * @date 2016-09-25
  */
 public interface TestMapper extends BaseMapper<Test> {
 

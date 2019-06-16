@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.enums.DBType;
@@ -46,80 +47,105 @@ public class GlobalConfiguration implements Serializable {
      * 机器 ID 部分
      */
     private Long workerId;
+
     /**
      * 数据标识 ID 部分
      */
     private Long datacenterId;
+
     /**
      * 逻辑删除全局值
      */
     private String logicDeleteValue = null;
+
     /**
      * 逻辑未删除全局值
      */
     private String logicNotDeleteValue = null;
+
     /**
      * 表前缀
      */
     private String tablePrefix;
+
     /**
      * 数据库类型
      */
     private DBType dbType;
+
     /**
      * 主键类型（默认 ID_WORKER）
      */
     private IdType idType = IdType.ID_WORKER;
+
     /**
      * 表名、字段名、是否使用下划线命名（默认 true: 数据库下划线命名）
      */
     private boolean dbColumnUnderline = true;
+
     /**
      * SQL注入器
      */
     private ISqlInjector sqlInjector;
+
     /**
      * 表关键词 key 生成器
      */
     private IKeyGenerator keyGenerator;
+
     /**
      * 元对象字段填充控制器
      */
     private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
+
     /**
      * 字段验证策略
      */
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+
     /**
      * 是否刷新mapper
      */
     private boolean isRefresh = false;
+
     /**
      * 是否大写命名
      */
     private boolean isCapitalMode = false;
+
     /**
      * 标识符
      */
     private String identifierQuote;
+
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */
     private SqlSessionFactory sqlSessionFactory;
+
     /**
      * 缓存已注入CRUD的Mapper信息
      */
     private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
+
     /**
      * 缓存 Sql 解析初始化
      */
     private boolean sqlParserCache = false;
 
+    /**
+     * 是否启用多租户
+     */
+    private boolean multitenancy = false;
+
+    /**
+     * 多租户策略
+     */
+    private MultitenancyStrategy multitenancyStrategy = MultitenancyStrategy.NONE;
 
     public GlobalConfiguration() {
         // 构造方法
     }
-
 
     public GlobalConfiguration(ISqlInjector sqlInjector) {
         this.sqlInjector = sqlInjector;
@@ -149,7 +175,6 @@ public class GlobalConfiguration implements Serializable {
         this.keyGenerator = keyGenerator;
     }
 
-
     public String getLogicDeleteValue() {
         return logicDeleteValue;
     }
@@ -170,17 +195,17 @@ public class GlobalConfiguration implements Serializable {
         return dbType;
     }
 
+    public void setDbType(String dbType) {
+        this.dbType = DBType.getDBType(dbType);
+    }
+
     /**
      * 根据jdbcUrl设置数据库类型
      *
-     * @param jdbcUrl
+     * @param jdbcUrl jdbcUrl
      */
     public void setDbTypeOfJdbcUrl(String jdbcUrl) {
         this.dbType = JdbcUtils.getDbType(jdbcUrl);
-    }
-
-    public void setDbType(String dbType) {
-        this.dbType = DBType.getDBType(dbType);
     }
 
     public IdType getIdType() {
@@ -279,7 +304,7 @@ public class GlobalConfiguration implements Serializable {
             SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
         }
     }
-    
+
     public boolean isSqlParserCache() {
         return sqlParserCache;
     }
@@ -301,5 +326,21 @@ public class GlobalConfiguration implements Serializable {
             GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
         }
         return sqlSessionFactory;
+    }
+
+    public boolean isMultitenancy() {
+        return multitenancy;
+    }
+
+    public void setMultitenancy(boolean multitenancy) {
+        this.multitenancy = multitenancy;
+    }
+
+    public MultitenancyStrategy getMultitenancyStrategy() {
+        return multitenancyStrategy;
+    }
+
+    public void setMultitenancyStrategy(MultitenancyStrategy multitenancyStrategy) {
+        this.multitenancyStrategy = multitenancyStrategy;
     }
 }

@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.test.proxy.mapper;
  * </p>
  *
  * @author hubin
- * @Date 2016-07-06
+ * @date 2016-07-06
  */
 public class UserMapperImpl implements IUserMapper {
 

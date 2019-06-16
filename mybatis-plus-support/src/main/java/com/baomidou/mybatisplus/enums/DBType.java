@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * </p>
  *
  * @author hubin
- * @Date 2016-04-15
+ * @since  2016-04-15
  */
 public enum DBType {
 

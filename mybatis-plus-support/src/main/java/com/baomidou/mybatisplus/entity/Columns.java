@@ -25,11 +25,14 @@ import java.util.List;
  * </p>
  *
  * @author bliver
- * @Date 2017-07-28
+ * @since  2017-07-28
  */
 public class Columns implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    // 字段
+    private List<Column> columns = new ArrayList<>();
 
     private Columns() {
     }
@@ -59,9 +62,6 @@ public class Columns implements Serializable {
         this.columns.add(oneColumn);
         return this;
     }
-
-    //字段
-    private List<Column> columns = new ArrayList<>();
 
     public Column[] getColumns() {
         Column[] columnArray = new Column[columns.size()];

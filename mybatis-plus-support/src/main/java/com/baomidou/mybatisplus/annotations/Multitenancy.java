@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.annotations;
 
 
+import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
+
 import java.lang.annotation.*;
 
 /**
@@ -11,12 +13,8 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MultiTenant {
+public @interface Multitenancy {
 
-    String defaultContextProperty = "tenantId";
-
-    MultitenantStrategy strategy() default MultitenantStrategy.COLUMN;
-
-    String contextProperty() default defaultContextProperty;
+    MultitenancyStrategy strategy() default MultitenancyStrategy.NONE;
 
 }

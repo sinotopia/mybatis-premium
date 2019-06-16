@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.plugins.Page;
  * </p>
  *
  * @author hubin
- * @Date 2016-04-20
+ * @date 2016-04-20
  */
 public interface IService<T> {
 

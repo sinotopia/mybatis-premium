@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * </p>
  *
  * @author Caratacu
- * @Date 2016-12-22
+ * @date 2016-12-22
  */
 @TableName("not_pk")
 public class NotPK implements Serializable {

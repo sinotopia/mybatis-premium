@@ -34,7 +34,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @date 2016-01-23
  */
 public class MybatisConfiguration extends Configuration {
 

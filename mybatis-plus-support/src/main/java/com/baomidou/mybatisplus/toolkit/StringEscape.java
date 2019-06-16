@@ -6,7 +6,7 @@ package com.baomidou.mybatisplus.toolkit;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-10-16
+ * @date 2016-10-16
  */
 public class StringEscape {
 

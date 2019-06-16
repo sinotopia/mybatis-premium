@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.test.mysql.entity;
  * </p>
  *
  * @author junyu
- * @Date 2016-09-09
+ * @date 2016-09-09
  */
 public class PhoneNumber {
 

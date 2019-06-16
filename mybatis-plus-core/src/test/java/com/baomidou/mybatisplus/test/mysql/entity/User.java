@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.enums.FieldFill;
  * </p>
  *
  * @author hubin sjy
- * @Date 2016-09-09
+ * @date 2016-09-09
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
 @TableName(resultMap = "userMap")

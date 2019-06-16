@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.test.oracle.mapper.TestSequserMapper;
  * </p>
  *
  * @author zashitou
- * @Date 2017-04-20
+ * @date 2017-04-20
  */
 public class TestSequserMapperTest {
 

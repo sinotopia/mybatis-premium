@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-12-22
+ * @date 2016-12-22
  */
 public interface NotPKMapper extends BaseMapper<NotPK> {
 

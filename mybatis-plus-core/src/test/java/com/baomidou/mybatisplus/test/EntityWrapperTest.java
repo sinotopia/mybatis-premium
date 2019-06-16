@@ -44,7 +44,6 @@ import com.baomidou.mybatisplus.test.mysql.entity.User;
  */
 public class EntityWrapperTest {
 
-
     /*
      * User 查询包装器
      */

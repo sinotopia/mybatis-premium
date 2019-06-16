@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * </p>
  *
  * @author hubin , yanghu , Dyang , Caratacus
- * @Date 2016-11-7
+ * @date 2016-11-7
  */
 @SuppressWarnings("serial")
 public class EntityWrapper<T> extends Wrapper<T> {

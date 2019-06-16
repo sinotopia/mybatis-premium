@@ -51,7 +51,15 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public class LogicDeleteSqlParser extends AbstractJsqlParser {
 
-    private LogicDeleteHandler logicDeleteHandler = new LogicDeleteDefaultHandler();
+    private LogicDeleteHandler logicDeleteHandler = new DefaultLogicDeleteHandler();
+
+    public LogicDeleteHandler getLogicDeleteHandler() {
+        return logicDeleteHandler;
+    }
+
+    public void setLogicDeleteHandler(LogicDeleteHandler logicDeleteHandler) {
+        this.logicDeleteHandler = logicDeleteHandler;
+    }
 
     /**
      * select 语句处理
@@ -154,7 +162,7 @@ public class LogicDeleteSqlParser extends AbstractJsqlParser {
      * 处理 PlainSelect
      * </p>
      *
-     * @param plainSelect
+     * @param plainSelect plainSelect
      * @param addColumn   是否添加逻辑删除列
      */
     protected void processPlainSelect(PlainSelect plainSelect, boolean addColumn) {
@@ -183,6 +191,7 @@ public class LogicDeleteSqlParser extends AbstractJsqlParser {
 
     /**
      * 处理子查询等
+     * @param fromItem fromItem
      */
     protected void processFromItem(FromItem fromItem) {
         if (fromItem instanceof SubJoin) {
@@ -269,11 +278,4 @@ public class LogicDeleteSqlParser extends AbstractJsqlParser {
         return new Column(column.toString());
     }
 
-    public LogicDeleteHandler getLogicDeleteHandler() {
-        return logicDeleteHandler;
-    }
-
-    public void setLogicDeleteHandler(LogicDeleteHandler logicDeleteHandler) {
-        this.logicDeleteHandler = logicDeleteHandler;
-    }
 }

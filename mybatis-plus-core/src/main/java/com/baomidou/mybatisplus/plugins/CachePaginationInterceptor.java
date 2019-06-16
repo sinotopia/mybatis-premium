@@ -41,7 +41,7 @@ import com.baomidou.mybatisplus.toolkit.SqlUtils;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @date 2016-01-23
  */
 @Intercepts({@Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
        @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})

@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
  * </p>
  *
  * @author Caratacu
- * @Date 2016-09-25
+ * @date 2016-09-25
  */
 // 表名为 test 可以不需要注解，特殊如 @TableName("tb_test")
 public class Test extends Model<Test> {

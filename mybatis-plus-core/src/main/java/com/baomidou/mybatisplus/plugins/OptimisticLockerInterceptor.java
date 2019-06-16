@@ -143,10 +143,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
      *
      * @param entityClass        实体类
      * @param et                 参数entity
-     * @param entityVersionField
+     * @param entityVersionField entityVersionField
      * @param originalVersionVal 原来版本的value
      * @param updatedVersionVal  乐观锁自动更新的新value
-     * @param map
+     * @param map map
      */
     private void dealUpdateById(Class<?> entityClass, Object et, EntityField entityVersionField,
                                 Object originalVersionVal, Object updatedVersionVal, Map map) throws IllegalAccessException {
@@ -174,7 +174,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * This method provides the control for version value.<BR>
      * Returned value type must be the same as original one.
      *
-     * @param originalVersionVal
+     * @param originalVersionVal originalVersionVal
      * @return updated version val
      */
     protected Object getUpdatedVersionVal(Object originalVersionVal) {
@@ -260,8 +260,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
     /**
      * 获取实体的反射属性(类似getter)
      *
-     * @param parameterClass
-     * @return
+     * @param parameterClass parameterClass
+     * @return EntityFields
      */
     private List<EntityField> getEntityFields(Class<?> parameterClass) {
         if (entityFieldsCache.containsKey(parameterClass)) {

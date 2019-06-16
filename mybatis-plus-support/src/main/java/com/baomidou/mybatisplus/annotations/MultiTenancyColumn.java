@@ -12,8 +12,13 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MultiTenantColumn {
+public @interface MultiTenancyColumn {
 
+    /**
+     * <p>
+     * 字段名
+     * </p>
+     */
     String value() default "tenantId";
 
 }

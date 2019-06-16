@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.toolkit.EnumUtils;
  * </p>
  *
  * @author hubin
- * @Date 2017-10-11
+ * @date 2017-10-11
  */
 public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<IEnum> {
 

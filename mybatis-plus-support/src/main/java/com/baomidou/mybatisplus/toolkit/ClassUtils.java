@@ -13,8 +13,8 @@ public class ClassUtils {
     /**
      * 判断是否为代理对象
      *
-     * @param clazz
-     * @return
+     * @param clazz clazz
+     * @return boolean
      */
     public static boolean isProxy(Class<?> clazz) {
         if (clazz != null) {
@@ -34,8 +34,8 @@ public class ClassUtils {
     /**
      * 获取当前对象的class
      *
-     * @param clazz
-     * @return
+     * @param clazz clazz
+     * @return clazz
      */
     public static Class<?> getUserClass(Class<?> clazz) {
         return isProxy(clazz) ? clazz.getSuperclass() : clazz;
@@ -44,8 +44,8 @@ public class ClassUtils {
     /**
      * 获取当前对象的class
      *
-     * @param object
-     * @return
+     * @param object object
+     * @return clazz
      */
     public static Class<?> getUserClass(Object object) {
         if (object == null) {

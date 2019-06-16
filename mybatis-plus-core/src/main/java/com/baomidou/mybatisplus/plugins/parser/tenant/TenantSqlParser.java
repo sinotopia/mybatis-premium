@@ -180,7 +180,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * 处理 PlainSelect
      * </p>
      *
-     * @param plainSelect
+     * @param plainSelect plainSelect
      * @param addColumn   是否添加租户列,insert into select语句中需要
      */
     protected void processPlainSelect(PlainSelect plainSelect, boolean addColumn) {
@@ -209,6 +209,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
 
     /**
      * 处理子查询等
+     * @param  fromItem fromItem
      */
     protected void processFromItem(FromItem fromItem) {
         if (fromItem instanceof SubJoin) {

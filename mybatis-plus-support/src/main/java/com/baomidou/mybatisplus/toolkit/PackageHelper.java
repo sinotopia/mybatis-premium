@@ -34,7 +34,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * </p>
  *
  * @author hubin
- * @Date 2016-06-16
+ * @date 2016-06-16
  */
 public class PackageHelper {
 
