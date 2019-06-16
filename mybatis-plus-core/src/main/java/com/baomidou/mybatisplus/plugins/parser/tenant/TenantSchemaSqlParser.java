@@ -34,6 +34,14 @@ public class TenantSchemaSqlParser extends AbstractJsqlParser {
 
     private TenantSchemaHandler tenantSchemaHandler;
 
+    public TenantSchemaHandler getTenantSchemaHandler() {
+        return tenantSchemaHandler;
+    }
+
+    public void setTenantSchemaHandler(TenantSchemaHandler tenantSchemaHandler) {
+        this.tenantSchemaHandler = tenantSchemaHandler;
+    }
+
     @Override
     public void processInsert(Insert insert) {
 
@@ -54,11 +62,4 @@ public class TenantSchemaSqlParser extends AbstractJsqlParser {
 
     }
 
-    public TenantSchemaHandler getTenantSchemaHandler() {
-        return tenantSchemaHandler;
-    }
-
-    public void setTenantSchemaHandler(TenantSchemaHandler tenantSchemaHandler) {
-        this.tenantSchemaHandler = tenantSchemaHandler;
-    }
 }

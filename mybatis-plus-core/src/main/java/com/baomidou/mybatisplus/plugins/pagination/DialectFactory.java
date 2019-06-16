@@ -49,7 +49,6 @@ public class DialectFactory {
      */
     private static final Map<String, IDialect> dialectCache = new ConcurrentHashMap<>();
 
-
     /**
      * <p>
      * 生成翻页执行 SQL

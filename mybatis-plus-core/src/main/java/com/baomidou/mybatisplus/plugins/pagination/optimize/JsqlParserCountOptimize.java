@@ -53,6 +53,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
      * 日志
      */
     private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
+
     private static final List<SelectItem> countSelectItem = countSelectItem();
 
     @Override
@@ -95,7 +96,6 @@ public class JsqlParserCountOptimize implements ISqlParser {
             return sqlInfo;
         }
     }
-
 
     /**
      * <p>

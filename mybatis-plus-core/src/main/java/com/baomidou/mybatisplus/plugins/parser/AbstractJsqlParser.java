@@ -109,16 +109,32 @@ public abstract class AbstractJsqlParser implements ISqlParser {
         return SqlInfo.newInstance().setSql(statement.toString());
     }
 
-    // 新增
+    /**
+     * 新增
+     *
+     * @param insert
+     */
     public abstract void processInsert(Insert insert);
 
-    // 删除
+    /**
+     * 删除
+     *
+     * @param delete
+     */
     public abstract void processDelete(Delete delete);
 
-    // 更新
+    /**
+     * 更新
+     *
+     * @param update
+     */
     public abstract void processUpdate(Update update);
 
-    // 查询
+    /**
+     * 查询
+     *
+     * @param selectBody
+     */
     public abstract void processSelectBody(SelectBody selectBody);
 
     /**
