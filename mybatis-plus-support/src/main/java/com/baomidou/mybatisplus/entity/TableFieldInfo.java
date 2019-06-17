@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 import com.baomidou.mybatisplus.mapper.SqlCondition;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -142,7 +141,7 @@ public class TableFieldInfo {
          */
         this.fieldFill = tableField.fill();
         // 保存该列是否是多租户列
-        this.multiTenancyColumn = this.initMultiTenancy(globalConfig,field);
+        this.multiTenancyColumn = this.initMultiTenancy(globalConfig, tableInfo, field);
     }
 
     public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
@@ -158,6 +157,8 @@ public class TableFieldInfo {
         this.fieldStrategy = globalConfig.getFieldStrategy();
         this.propertyType = field.getType();
         tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+        // 保存该列是否是多租户列
+        this.multiTenancyColumn = this.initMultiTenancy(globalConfig, tableInfo, field);
     }
 
     /**
@@ -199,18 +200,21 @@ public class TableFieldInfo {
      * @param globalConfig 全局配置
      * @param field        字段属性对象
      */
-    private boolean initMultiTenancy(GlobalConfiguration globalConfig, Field field) {
-        if (globalConfig.isMultitenancy()) {
+    private boolean initMultiTenancy(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
+        if (!globalConfig.isMultitenancy()) {
             // 未设置多租户不进行
             return false;
         }
-        if(!MultitenancyStrategy.COLUMN.equals(globalConfig.getMultitenancyStrategy())){
-            // 非列策略不进行
+        if (!tableInfo.isMultitenancy()) {
             return false;
         }
+//        if (!MultitenancyStrategy.COLUMN.equals(globalConfig.getMultitenancyStrategy())) {
+//            // 非列策略不进行
+//            return false;
+//        }
         /* 获取注解属性，多租户字段 */
         MultiTenancyColumn multiTenancyColumn = field.getAnnotation(MultiTenancyColumn.class);
-        return multiTenancyColumn!=null;
+        return multiTenancyColumn != null;
     }
 
     public boolean isRelated() {

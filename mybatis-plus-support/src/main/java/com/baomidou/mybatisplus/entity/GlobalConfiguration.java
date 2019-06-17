@@ -19,12 +19,9 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
+import com.baomidou.mybatisplus.enums.*;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
@@ -136,12 +133,17 @@ public class GlobalConfiguration implements Serializable {
     /**
      * 是否启用多租户
      */
-    private boolean multitenancy = false;
+    private boolean multitenancy = true;
 
     /**
      * 多租户策略
      */
-    private MultitenancyStrategy multitenancyStrategy = MultitenancyStrategy.NONE;
+    private MultitenancyStrategy multitenancyStrategy = MultitenancyStrategy.COLUMN;
+
+    /**
+     * 多租户空值填充策略
+     */
+    private MultitenancyFillStrategy multitenancyFillStrategy = MultitenancyFillStrategy.DEFAULT;
 
     public GlobalConfiguration() {
         // 构造方法

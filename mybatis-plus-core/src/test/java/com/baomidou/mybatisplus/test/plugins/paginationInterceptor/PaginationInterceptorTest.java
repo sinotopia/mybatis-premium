@@ -29,12 +29,15 @@ public class PaginationInterceptorTest {
 
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
+
     @Autowired
     private PageUserService pageUserService;
+
     @Autowired
     private PageUserMapper pageUserMapper;
 
     private int current;
+
     private int size;
 
     @Before
@@ -59,7 +62,6 @@ public class PaginationInterceptorTest {
         Page<PageUser> page1 = new Page<>(current, size);
         Page<PageUser> result1 = pageUserService.selectPage(page1);
         Assert.assertTrue(!result1.getRecords().isEmpty());
-
     }
 
     @Test

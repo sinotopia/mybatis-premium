@@ -63,6 +63,7 @@ public class MybatisPlusProperties {
      * Externalized properties for MyBatis configuration.
      */
     private Properties configurationProperties;
+
     /**
      * Externalized properties for MyBatis configuration.
      */
@@ -77,6 +78,7 @@ public class MybatisPlusProperties {
     private MybatisConfiguration configuration;
 
     /**
+     * @return configLocation
      * @since 1.1.0
      */
     public String getConfigLocation() {
@@ -84,6 +86,9 @@ public class MybatisPlusProperties {
     }
 
     /**
+     * configLocation
+     *
+     * @param configLocation configLocation
      * @since 1.1.0
      */
     public void setConfigLocation(String configLocation) {
@@ -139,6 +144,7 @@ public class MybatisPlusProperties {
     }
 
     /**
+     * @return configurationProperties
      * @since 1.2.0
      */
     public Properties getConfigurationProperties() {
@@ -146,6 +152,9 @@ public class MybatisPlusProperties {
     }
 
     /**
+     * configurationProperties
+     *
+     * @param configurationProperties configurationProperties
      * @since 1.2.0
      */
     public void setConfigurationProperties(Properties configurationProperties) {

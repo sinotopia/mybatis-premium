@@ -90,7 +90,7 @@ public interface IService<T> {
      * </p>
      *
      * @param entityList 实体对象列表
-     * @param batchSize
+     * @param batchSize  batchSize
      * @return boolean
      */
     boolean insertOrUpdateBatch(List<T> entityList, int batchSize);
@@ -109,7 +109,7 @@ public interface IService<T> {
      * 批量修改或插入全部字段
      *
      * @param entityList 实体对象列表
-     * @param batchSize
+     * @param batchSize  batchSize
      * @return boolean
      */
     boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize);
@@ -302,7 +302,7 @@ public interface IService<T> {
      * </p>
      *
      * @param wrapper {@link Wrapper}
-     * @return Map<String,Object>
+     * @return Map<String, Object>
      */
     Map<String, Object> selectMap(Wrapper<T> wrapper);
 
@@ -332,7 +332,7 @@ public interface IService<T> {
      * </p>
      *
      * @param wrapper 实体包装类 {@link Wrapper}
-     * @return
+     * @return List
      */
     List<T> selectList(Wrapper<T> wrapper);
 
@@ -342,7 +342,7 @@ public interface IService<T> {
      * </p>
      *
      * @param page 翻页对象
-     * @return
+     * @return Page
      */
     Page<T> selectPage(Page<T> page);
 
@@ -352,7 +352,7 @@ public interface IService<T> {
      * </p>
      *
      * @param wrapper {@link Wrapper}
-     * @return
+     * @return List
      */
     List<Map<String, Object>> selectMaps(Wrapper<T> wrapper);
 

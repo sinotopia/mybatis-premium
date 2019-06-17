@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.entity;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.enums.MultitenancyFillStrategy;
 import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 import org.apache.ibatis.session.Configuration;
 
@@ -95,12 +96,23 @@ public class TableInfo {
     private boolean logicDelete = false;
 
     /**
+     * 是否开多租户表
+     */
+    private boolean multitenancy = false;
+
+    /**
      * 多租户策略，当
      * 仅当MultiTenantType = {@code MultitenancyStrategy.TABLE} 或
      * MultiTenantType = {@code MultitenancyStrategy.COLUMN}
      * 时有效
      */
-    private MultitenancyStrategy multitenancyStrategy= MultitenancyStrategy.NONE;
+    private MultitenancyStrategy multitenancyStrategy = MultitenancyStrategy.NONE;
+
+    /**
+     * 空值填充策略
+     * 仅当tenant= null时有效
+     */
+    private MultitenancyFillStrategy multitenancyFillStrategy;
 
     /**
      * <p>
@@ -220,11 +232,27 @@ public class TableInfo {
         this.logicDelete = logicDelete;
     }
 
+    public boolean isMultitenancy() {
+        return multitenancy;
+    }
+
+    public void setMultitenancy(boolean multitenancy) {
+        this.multitenancy = multitenancy;
+    }
+
     public MultitenancyStrategy getMultitenancyStrategy() {
         return multitenancyStrategy;
     }
 
     public void setMultitenancyStrategy(MultitenancyStrategy multitenancyStrategy) {
         this.multitenancyStrategy = multitenancyStrategy;
+    }
+
+    public MultitenancyFillStrategy getMultitenancyFillStrategy() {
+        return multitenancyFillStrategy;
+    }
+
+    public void setMultitenancyFillStrategy(MultitenancyFillStrategy multitenancyFillStrategy) {
+        this.multitenancyFillStrategy = multitenancyFillStrategy;
     }
 }

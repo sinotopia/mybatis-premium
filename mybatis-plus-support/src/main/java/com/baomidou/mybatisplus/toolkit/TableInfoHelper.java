@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.baomidou.mybatisplus.annotations.*;
+import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -110,7 +111,7 @@ public class TableInfoHelper {
      * <p>
      *
      * @param builderAssistant builderAssistant
-     * @param clazz 反射实体类
+     * @param clazz            反射实体类
      * @return TableInfo
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
@@ -166,13 +167,17 @@ public class TableInfoHelper {
         }
         // 多租户策略配置
         // TODO
-        if(globalConfig.isMultitenancy()){
+        if (globalConfig.isMultitenancy()) {
             Multitenancy multitenancy = clazz.getAnnotation(Multitenancy.class);
-            if(multitenancy!=null){
-                tableInfo.setMultitenancyStrategy(multitenancy.strategy());
-            }else {
-                if (null != globalConfig.getMultitenancyStrategy()) {
-                    tableInfo.setMultitenancyStrategy(globalConfig.getMultitenancyStrategy());
+            if (multitenancy != null) {
+                if (MultitenancyStrategy.TABLE.equals(multitenancy.strategy()) ||
+                    MultitenancyStrategy.COLUMN.equals(multitenancy.strategy())) {
+                    tableInfo.setMultitenancy(true);
+                    tableInfo.setMultitenancyStrategy(multitenancy.strategy());
+                } else {
+                    if (null != globalConfig.getMultitenancyStrategy()) {
+                        tableInfo.setMultitenancyStrategy(globalConfig.getMultitenancyStrategy());
+                    }
                 }
             }
         }
@@ -249,10 +254,10 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param globalConfig  globalConfig
-     * @param tableInfo tableInfo
-     * @param field field
-     * @param clazz clazz
+     * @param globalConfig globalConfig
+     * @param tableInfo    tableInfo
+     * @param field        field
+     * @param clazz        clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
@@ -300,10 +305,10 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param globalConfig  globalConfig
-     * @param tableInfo tableInfo
-     * @param field field
-     * @param clazz clazz
+     * @param globalConfig globalConfig
+     * @param tableInfo    tableInfo
+     * @param field        field
+     * @param clazz        clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {

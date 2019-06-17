@@ -107,10 +107,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
      * 注入查询 SQL 语句
      * </p>
      *
-     * @param batch       是否为批量插入
-     * @param mapperClass
-     * @param modelClass
-     * @param table
+     * @param batch 是否为批量插入
      */
     @Override
     protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
@@ -140,10 +137,6 @@ public class LogicSqlInjector extends AutoSqlInjector {
      * <p>
      * 注入更新 SQL 语句
      * </p>
-     *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
      */
     @Override
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {

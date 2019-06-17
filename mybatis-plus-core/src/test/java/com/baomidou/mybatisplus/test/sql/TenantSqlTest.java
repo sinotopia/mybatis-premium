@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
-import com.baomidou.mybatisplus.plugins.parser.tenant.TenantHandler;
-import com.baomidou.mybatisplus.plugins.parser.tenant.TenantSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.multitenancy.TenantHandler;
+import com.baomidou.mybatisplus.plugins.parser.multitenancy.MultitenancySqlParser;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -22,27 +22,27 @@ import net.sf.jsqlparser.expression.LongValue;
  */
 public class TenantSqlTest {
 
-    private TenantSqlParser tenantSqlParser;
+    private MultitenancySqlParser tenantSqlParser;
 
     @Before
     public void setUp() throws Exception {
-        tenantSqlParser = new TenantSqlParser();
-        tenantSqlParser.setTenantHandler(new TenantHandler() {
-            @Override
-            public Expression getTenantId() {
-                return new LongValue(1000L);
-            }
-
-            @Override
-            public String getTenantIdColumn() {
-                return "tenant_id";
-            }
-
-            @Override
-            public boolean doTableFilter(String tableName) {
-                return "user".equals(tableName);
-            }
-        });
+        tenantSqlParser = new MultitenancySqlParser();
+//        tenantSqlParser.setTenantHandler(new TenantHandler() {
+//            @Override
+//            public Expression getTenantId() {
+//                return new LongValue(1000L);
+//            }
+//
+//            @Override
+//            public String getTenantIdColumn() {
+//                return "tenant_id";
+//            }
+//
+//            @Override
+//            public boolean doTableFilter(String tableName) {
+//                return "user".equals(tableName);
+//            }
+//        });
     }
 
     // ----------------------------    insert 测试     ----------------------------

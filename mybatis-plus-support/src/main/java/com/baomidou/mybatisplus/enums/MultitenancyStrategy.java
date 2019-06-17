@@ -26,7 +26,7 @@ public enum MultitenancyStrategy {
     TABLE,
 
     /**
-     * 各租户数据在同一数据库实例的不同schema中
+     * 各租户数据在同一数据库实例的不同schema中（暂不支持）
      */
     SCHEMA,
 

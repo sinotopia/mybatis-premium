@@ -83,20 +83,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
     }
-    
+
     /**
      * 释放sqlSession
+     *
      * @param sqlSession session
      */
-    protected void closeSqlSession(SqlSession sqlSession){
+    protected void closeSqlSession(SqlSession sqlSession) {
         SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(currentModelClass()));
     }
-    
+
     /**
      * 获取SqlStatement
      *
-     * @param sqlMethod
-     * @return
+     * @param sqlMethod sqlMethod
+     * @return sqlStatement
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
@@ -123,9 +124,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     /**
      * 批量插入
      *
-     * @param entityList
-     * @param batchSize
-     * @return
+     * @param entityList entityList
+     * @param batchSize  batchSize
+     * @return boolean
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -133,7 +134,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
             for (int i = 0; i < size; i++) {
@@ -237,13 +238,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             Class<?> cls = null;
             TableInfo tableInfo = null;
             for (int i = 0; i < size; i++) {
                 T entity = entityList.get(i);
-                if(i == 0){
+                if (i == 0) {
                     cls = entity.getClass();
                     tableInfo = TableInfoHelper.getTableInfo(cls);
                 }
@@ -251,7 +252,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
                     if (StringUtils.checkValNull(idVal)) {
                         String sqlStatement = sqlStatement(selective ? SqlMethod.INSERT_ONE : SqlMethod.INSERT_ONE_ALL_COLUMN);
-                        batchSqlSession.insert(sqlStatement,entity);
+                        batchSqlSession.insert(sqlStatement, entity);
                     } else {
                         String sqlStatement = sqlStatement(selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID);
                         MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
@@ -357,7 +358,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
             String sqlStatement = sqlStatement(sqlMethod);

@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  * @author walkman
  */
 @Documented
-@Target({ElementType.TYPE})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MultiTenancyColumn {
 

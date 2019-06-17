@@ -148,10 +148,12 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
     /**
      * 查询总记录条数
      *
-     * @param sql
-     * @param mappedStatement
-     * @param boundSql
-     * @param page
+     * @param overflowCurrent overflowCurrent
+     * @param sql             sql
+     * @param mappedStatement mappedStatement
+     * @param boundSql        boundSql
+     * @param page            page
+     * @param connection      connection
      */
     protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

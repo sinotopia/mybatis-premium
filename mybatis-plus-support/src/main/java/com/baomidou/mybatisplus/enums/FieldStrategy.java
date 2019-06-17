@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.enums;
  * </p>
  *
  * @author hubin
- * @since  2016-09-09
+ * @since 2016-09-09
  */
 public enum FieldStrategy {
     IGNORED(0, "忽略判断"),
