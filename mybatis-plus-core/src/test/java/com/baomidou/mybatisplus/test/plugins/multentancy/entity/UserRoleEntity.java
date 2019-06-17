@@ -1,10 +1,9 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy;
+package com.baomidou.mybatisplus.test.plugins.multentancy.entity;
 
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotations.*;
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.MultitenancyStrategy;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,6 +15,7 @@ import java.util.Date;
  * @since 2018-08-28
  */
 @TableName("ucc_user_role")
+@Multitenancy(strategy = MultitenancyStrategy.COLUMN)
 public class UserRoleEntity implements Serializable {
 
     @TableField(exist = false)
@@ -31,6 +31,7 @@ public class UserRoleEntity implements Serializable {
      * 租户ID
      */
     @TableField(value = "tenantId")
+    @MultiTenancyColumn
     private Integer tenantId;
 
     /**

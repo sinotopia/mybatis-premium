@@ -1,9 +1,9 @@
-package com.scapegoat.scaffolder.ucc.service.impl;
+package com.baomidou.mybatisplus.test.plugins.multentancy.service.impl;
 
-import com.scapegoat.infrastructure.dataplus.service.impl.CrudServiceImpl;
-import com.scapegoat.scaffolder.ucc.domain.UserRoleEntity;
-import com.scapegoat.scaffolder.ucc.mapper.UserRoleMapper;
-import com.scapegoat.scaffolder.ucc.service.UserRoleCrudService;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.test.plugins.multentancy.entity.UserRoleEntity;
+import com.baomidou.mybatisplus.test.plugins.multentancy.mapper.UserRoleMapper;
+import com.baomidou.mybatisplus.test.plugins.multentancy.service.UserRoleCrudService;
 import org.springframework.stereotype.Service;
 
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @date 2018-08-20
  */
 @Service("userRoleCrudService")
-public class UserRoleCrudServiceImpl extends CrudServiceImpl<UserRoleMapper, UserRoleEntity>
-        implements UserRoleCrudService {
+public class UserRoleCrudServiceImpl extends ServiceImpl<UserRoleMapper, UserRoleEntity>
+    implements UserRoleCrudService {
 
 }

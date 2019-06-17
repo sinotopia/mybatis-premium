@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy;
+package com.baomidou.mybatisplus.test.plugins.multentancy.entity;
 
 import com.baomidou.mybatisplus.annotations.*;
 import com.baomidou.mybatisplus.enums.FieldFill;
@@ -34,12 +34,6 @@ public class UserEntity implements Serializable {
     @TableField(value = "tenantId")
     @MultiTenancyColumn
     private Integer tenantId;
-
-    /**
-     * uuid
-     */
-    @TableField(value = "uuid")
-    private String uuid;
 
     /**
      * 用户名

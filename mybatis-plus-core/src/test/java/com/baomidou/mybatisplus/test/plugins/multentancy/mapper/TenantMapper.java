@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy;
+package com.baomidou.mybatisplus.test.plugins.multentancy.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.plugins.multentancy.entity.TenantEntity;
