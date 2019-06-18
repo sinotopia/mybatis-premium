@@ -1,12 +1,12 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy;
+package com.baomidou.mybatisplus.test.plugins.multitenancy;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.MultiTenancyInterceptor;
 import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.multitenancy.DefaultTenantHandler;
 import com.baomidou.mybatisplus.plugins.parser.multitenancy.MultitenancySqlParser;
-import com.baomidou.mybatisplus.test.plugins.multentancy.entity.UserEntity;
-import com.baomidou.mybatisplus.test.plugins.multentancy.service.UserCrudService;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.entity.UserEntity;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.service.UserCrudService;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.SqlSession;
@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/plugins/multentancy/multentancyInterceptor.xml"})
-public class MultentancyInterceptorTest {
+@ContextConfiguration(locations = {"/plugins/multitenancy/multitenancyInterceptor.xml"})
+public class MultitenancyInterceptorTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MultentancyInterceptorTest.class);
+    private static final Logger log = LoggerFactory.getLogger(MultitenancyInterceptorTest.class);
 
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
@@ -52,7 +52,7 @@ public class MultentancyInterceptorTest {
 
         SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
         Connection conn = session.getConnection();
-        Reader reader = Resources.getResourceAsReader("plugins/multentancy/multentancy.sql");
+        Reader reader = Resources.getResourceAsReader("plugins/multitenancy/multitenancy.sql");
         ScriptRunner runner = new ScriptRunner(conn);
         runner.setLogWriter(null);
         runner.runScript(reader);
@@ -65,18 +65,24 @@ public class MultentancyInterceptorTest {
     public void selectTest() {
 //        UserEntity userEntity = userCrudService.selectById(1);
 //        Assert.assertNotNull(userEntity);
-        EntityWrapper<UserEntity> wrapper = new EntityWrapper<>();
-        wrapper.eq("id", 1);
-        wrapper.eq("userName", "root");
-        UserEntity userEntity1 = userCrudService.selectOne(wrapper);
-        Assert.assertNotNull(userEntity1);
+//        EntityWrapper<UserEntity> wrapper = new EntityWrapper<>();
+//        wrapper.eq("id", 1);
+//        wrapper.eq("userName", "root");
+//        UserEntity userEntity1 = userCrudService.selectOne(wrapper);
+//        Assert.assertNotNull(userEntity1);
 //        List<Integer> ids = new ArrayList<>();
+//        ids.add(1);
 //        List<UserEntity> userEntityies = userCrudService.selectBatchIds(ids);
 //        Assert.assertFalse(userEntityies.isEmpty());
-//        List<UserEntity> userEntityies = userCrudService.se(ids);
+
 //        userCrudService.selectByMap(ids);
 //        userCrudService.selectCount(ids);
 //        userCrudService.selectList()
+        EntityWrapper<UserEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", 1);
+        wrapper.eq("userName", "root");
+        List<UserEntity> userEntityies = userCrudService.selectList(wrapper);
+        Assert.assertFalse(userEntityies.isEmpty());
 //        userCrudService.selectMaps()
 //        userCrudService.selectObj()
 //        userCrudService.selectObjs()
@@ -91,6 +97,44 @@ public class MultentancyInterceptorTest {
     }
 
     @Test
+    public void insertTest() {
+        boolean retValue = false;
+        UserEntity userEntity1 = new UserEntity();
+        userEntity1.setId(1L);
+//        userEntity1.setTenantId(10);
+        userEntity1.setAccount("Account");
+        userEntity1.setUserName("UserName");
+        userEntity1.setPassword("password");
+        userEntity1.setSalt("salt");
+        userEntity1.setAccessAttemptCount(0);
+        userEntity1.setEmailAddress("email.com");
+//        boolean retValue = userCrudService.insertAllColumn(userEntity1);
+////        boolean retValue = userCrudService.insert(userEntity);
+//        Assert.assertNotNull(userEntity1.getId());
+//        List<UserEntity> userEntities = new ArrayList<>();
+//        UserEntity userEntity2 = new UserEntity();
+//        userEntity2.setTenantId(10);
+//        userEntity2.setAccount("Account");
+//        userEntity2.setUserName("UserName");
+//        userEntity2.setPassword("password");
+//        userEntity2.setSalt("salt");
+//        userEntity2.setAccessAttemptCount(0);
+//        userEntity2.setEmailAddress("email.com");
+//        userEntities.add(userEntity1);
+//        userEntities.add(userEntity2);
+//        retValue = userCrudService.insertBatch(userEntities);
+//        userCrudService.insertBatch()
+//        Assert.assertTrue(retValue);
+        retValue = userCrudService.insertOrUpdate(userEntity1);
+        Assert.assertTrue(retValue);
+//        userCrudService.insertOrUpdateAllColumn()
+//        userCrudService.insertOrUpdateAllColumnBatch()
+//        userCrudService.insertOrUpdateAllColumnBatch()
+//        userCrudService.insertOrUpdateBatch()
+//        userCrudService.insertOrUpdateBatch()
+    }
+
+    @Test
     public void updateTest() {
 //        userCrudService.update()
 //        userCrudService.updateAllColumnBatchById()
@@ -101,17 +145,5 @@ public class MultentancyInterceptorTest {
 //        userCrudService.updateForSet()
     }
 
-    @Test
-    public void insertTest() {
-//        userCrudService.insert()
-//        userCrudService.insertAllColumn()
-//        userCrudService.insertBatch()
-//        userCrudService.insertBatch()
-//        userCrudService.insertOrUpdate()
-//        userCrudService.insertOrUpdateAllColumn()
-//        userCrudService.insertOrUpdateAllColumnBatch()
-//        userCrudService.insertOrUpdateAllColumnBatch()
-//        userCrudService.insertOrUpdateBatch()
-//        userCrudService.insertOrUpdateBatch()
-    }
+
 }

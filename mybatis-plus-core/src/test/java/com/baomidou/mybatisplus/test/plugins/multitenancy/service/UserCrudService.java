@@ -1,7 +1,7 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy.service;
+package com.baomidou.mybatisplus.test.plugins.multitenancy.service;
 
 import com.baomidou.mybatisplus.service.IService;
-import com.baomidou.mybatisplus.test.plugins.multentancy.entity.UserEntity;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.entity.UserEntity;
 
 /**
  * @author walkman
