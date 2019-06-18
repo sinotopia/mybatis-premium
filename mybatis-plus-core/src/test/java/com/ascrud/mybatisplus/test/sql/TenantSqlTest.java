@@ -6,11 +6,7 @@ import org.junit.Test;
 
 import com.ascrud.mybatisplus.exceptions.MybatisPlusException;
 import com.ascrud.mybatisplus.plugins.parser.SqlInfo;
-import com.ascrud.mybatisplus.plugins.parser.multitenancy.TenantHandler;
 import com.ascrud.mybatisplus.plugins.parser.multitenancy.MultitenancySqlParser;
-
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
 
 /**
  * <p>

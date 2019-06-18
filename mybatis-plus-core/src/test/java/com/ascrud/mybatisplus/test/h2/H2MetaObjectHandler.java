@@ -1,6 +1,6 @@
 package com.ascrud.mybatisplus.test.h2;
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, cacotopia (cacotopia@126.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
