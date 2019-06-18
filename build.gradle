@@ -51,7 +51,7 @@ ext {
 }
 
 allprojects{
-    group = 'com.baomidou'
+    group = 'com.ascrud'
     version = '2.4.0'
 }
 
@@ -150,12 +150,12 @@ subprojects{
                     name 'mybatis-plus'
                     packaging 'jar'
                     description 'An enhanced toolkit of Mybatis to simplify development.'
-                    url 'https://github.com/baomidou/mybatis-plus'
+                    url 'https://github.com/ascrud/mybatis-plus'
 
                     scm {
                         connection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
                         developerConnection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
-                        url 'https://github.com/baomidou/mybatis-plus'
+                        url 'https://github.com/ascrud/mybatis-plus'
                     }
 
                     licenses {
@@ -168,7 +168,7 @@ subprojects{
 
                     developers {
                         developer {
-                            id 'baomidou'
+                            id 'ascrud'
                             //noinspection GroovyAssignabilityCheck
                             name 'hubin'
                             email 'jobob@qq.com'

@@ -7,7 +7,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:component-scan base-package="com.baomidou.mybatisplus.test.h2.service"/>
+    <context:component-scan base-package="com.ascrud.mybatisplus.test.h2.service"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
@@ -16,9 +16,9 @@
         <property name="password" value=""/>
     </bean>
 
-    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+    <bean id="sqlSessionFactory" class="com.ascrud.mybatisplus.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="typeAliasesPackage" value="com.baomidou.mybatisplus.test.h2.entity"/>
+        <property name="typeAliasesPackage" value="com.ascrud.mybatisplus.test.h2.entity"/>
         <property name="configuration" ref="mybatisConfig"/>
         <!-- MP 全局配置注入 -->
         <property name="globalConfig" ref="globalConfig"/>
@@ -26,19 +26,19 @@
             <array>
                 <!-- 分页插件配置 -->
                 <bean id="paginationInterceptor"
-                      class="com.baomidou.mybatisplus.plugins.PaginationInterceptor"/>
+                      class="com.ascrud.mybatisplus.plugins.PaginationInterceptor"/>
                 <bean id="optimisticLockerInterceptor"
-                      class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
+                      class="com.ascrud.mybatisplus.plugins.OptimisticLockerInterceptor">
                 </bean>
                 <bean id="performanceInterceptor"
-                      class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor"/>
+                      class="com.ascrud.mybatisplus.plugins.PerformanceInterceptor"/>
             </array>
         </property>
     </bean>
 
-	<bean id="mybatisMapWrapperFactory" class="com.baomidou.mybatisplus.MybatisMapWrapperFactory"/>
+	<bean id="mybatisMapWrapperFactory" class="com.ascrud.mybatisplus.MybatisMapWrapperFactory"/>
 
-    <bean id="mybatisConfig" class="com.baomidou.mybatisplus.MybatisConfiguration">
+    <bean id="mybatisConfig" class="com.ascrud.mybatisplus.MybatisConfiguration">
         <property name="mapUnderscoreToCamelCase" value="true"/>
         <property name="jdbcTypeForNull">
             <util:constant static-field="org.apache.ibatis.type.JdbcType.NULL"/>
@@ -46,7 +46,7 @@
 		<property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
     </bean>
 
-    <bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+    <bean id="globalConfig" class="com.ascrud.mybatisplus.entity.GlobalConfiguration">
         <!-- 逻辑删除 定义下面3个参数-->
         <property name="sqlInjector" ref="logicSqlInjector"/>
         <property name="logicDeleteValue" value="-1"/>
@@ -66,14 +66,14 @@
     </bean>
 
     <!-- 配置oracle主键Sequence， 其他类型数据库，请配置相应的类型-->
-    <!--<bean id="keyGenerator" class="com.baomidou.mybatisplus.incrementer.OracleKeyGenerator"/>-->
+    <!--<bean id="keyGenerator" class="com.ascrud.mybatisplus.incrementer.OracleKeyGenerator"/>-->
 
     <!-- 自定义处理器 -->
-    <bean id="myMetaObjectHandler" class="com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler"/>
-    <bean id="logicSqlInjector" class="com.baomidou.mybatisplus.mapper.LogicSqlInjector"/>
+    <bean id="myMetaObjectHandler" class="com.ascrud.mybatisplus.test.h2.H2MetaObjectHandler"/>
+    <bean id="logicSqlInjector" class="com.ascrud.mybatisplus.mapper.LogicSqlInjector"/>
 
     <!-- 配置mybatis 扫描mapper接口的路径-->
     <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.baomidou.mybatisplus.test.h2.entity.mapper"/>
+        <property name="basePackage" value="com.ascrud.mybatisplus.test.h2.entity.mapper"/>
     </bean>
 </beans>

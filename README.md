@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/baomidou/mybatis-plus">
+  <a href="https://github.com/ascrud/mybatis-plus">
    <img alt="Mybatis-Plus-Logo" src="http://git.oschina.net/uploads/images/2016/0824/211639_4d931e7f_12260.png">
   </a>
 </p>
@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.baomidou%22%20AND%20a%3A%22mybatis-plus%22">
-    <img alt="maven" src="https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square">
+  <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ascrud%22%20AND%20a%3A%22mybatis-plus%22">
+    <img alt="maven" src="https://img.shields.io/maven-central/v/com.ascrud/mybatis-plus.svg?style=flat-square">
   </a>
 
   <a href="https://www.apache.org/licenses/LICENSE-2.0">
@@ -43,21 +43,21 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 文档 | Documentation
 
-[中文](http://mp.baomidou.com/)
+[中文](http://mp.ascrud.com/)
 
 # 原理 | Principle
 
-[Mybatis-Plus 实践及架构原理](http://git.oschina.net/baomidou/mybatis-plus/attach_files)
+[Mybatis-Plus 实践及架构原理](http://git.oschina.net/ascrud/mybatis-plus/attach_files)
 
 # 应用实例 | Demo
 
-[Spring-MVC](https://git.oschina.net/baomidou/mybatisplus-spring-mvc)
+[Spring-MVC](https://git.oschina.net/ascrud/mybatisplus-spring-mvc)
 
-[Spring-Boot](https://git.oschina.net/baomidou/mybatisplus-spring-boot)
+[Spring-Boot](https://git.oschina.net/ascrud/mybatisplus-spring-boot)
 
-[mybatisplus-sharding-jdbc](https://gitee.com/baomidou/mybatisplus-sharding-jdbc)
+[mybatisplus-sharding-jdbc](https://gitee.com/ascrud/mybatisplus-sharding-jdbc)
 
-[SSM-实战 Demo](http://git.oschina.net/baomidou/SpringWind)
+[SSM-实战 Demo](http://git.oschina.net/ascrud/SpringWind)
 
 # 下载地址 | Download
 
@@ -65,7 +65,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 ```xml
 <dependency>
-    <groupId>com.baomidou</groupId>
+    <groupId>com.ascrud</groupId>
     <artifactId>mybatis-plus</artifactId>
     <version>maven 官方最新版本为准</version>
 </dependency>
@@ -77,9 +77,9 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 其他开源项目 | Other Project
 
-- [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/baomidou/kisso)
-- [Java快速开发框架 SpringWind](http://git.oschina.net/baomidou/SpringWind)
-- [基于Hibernate扩展 Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
+- [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/ascrud/kisso)
+- [Java快速开发框架 SpringWind](http://git.oschina.net/ascrud/SpringWind)
+- [基于Hibernate扩展 Hibernate-Plus](http://git.oschina.net/ascrud/hibernate-plus)
 
 # 王者荣耀
 ![MPTrophy](https://gitee.com/uploads/images/2018/0102/101803_2fdba060_12260.jpeg)
@@ -94,7 +94,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 捐赠 | Donate
 
-> [捐赠记录,感谢你们的支持！](http://git.oschina.net/baomidou/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
+> [捐赠记录,感谢你们的支持！](http://git.oschina.net/ascrud/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
 
 ![捐赠 mybatis-plus](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png "支持一下mybatis-plus")
 

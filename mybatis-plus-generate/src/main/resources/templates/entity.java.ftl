@@ -7,7 +7,7 @@ import ${pkg};
 
 
 
-import com.baomidou.mybatisplus.annotations.Version;
+import com.ascrud.mybatisplus.annotations.Version;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
