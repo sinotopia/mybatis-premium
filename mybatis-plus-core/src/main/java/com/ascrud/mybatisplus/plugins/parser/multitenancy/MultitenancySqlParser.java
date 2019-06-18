@@ -375,7 +375,7 @@ public class MultitenancySqlParser extends AbstractJsqlParser {
     protected void processJoin(Join join) {
         if (join.getRightItem() instanceof Table) {
             Table fromTable = (Table) join.getRightItem();
-            if (!tenantHandler.isMultitenancy(this.tenantHandler.getTableName())) {
+            if (!tenantHandler.isMultitenancy(fromTable.getName())) {
                 // 过滤退出执行
                 return;
             }

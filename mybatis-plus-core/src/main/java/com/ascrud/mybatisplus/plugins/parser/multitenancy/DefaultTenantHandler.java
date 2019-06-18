@@ -5,7 +5,6 @@ import com.ascrud.mybatisplus.entity.TableInfo;
 import com.ascrud.mybatisplus.enums.MultitenancyFillStrategy;
 import com.ascrud.mybatisplus.toolkit.TableInfoHelper;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.NullValue;
 
 import java.util.List;
 import java.util.Map;
@@ -24,17 +23,17 @@ public class DefaultTenantHandler implements TenantHandler {
     /**
      * 缓存表名与多租户表的映射
      */
-    private static final Map<String, TableInfo> TABLE_TENANT_MAP = new ConcurrentHashMap<>();
+    protected static final Map<String, TableInfo> TABLE_TENANT_MAP = new ConcurrentHashMap<>();
 
     /**
      * 缓存表名与多租户列的映射
      */
-    private static final Map<String, TableFieldInfo> TABLE_TENANT_COLUMN_MAP = new ConcurrentHashMap<>();
+    protected static final Map<String, TableFieldInfo> TABLE_TENANT_COLUMN_MAP = new ConcurrentHashMap<>();
 
     /**
      * 默认忽略
      */
-    private MultitenancyFillStrategy fillStrategy = MultitenancyFillStrategy.IGNORED;
+    protected MultitenancyFillStrategy fillStrategy = MultitenancyFillStrategy.IGNORED;
 
     public DefaultTenantHandler() {
         init();
@@ -50,7 +49,7 @@ public class DefaultTenantHandler implements TenantHandler {
         this.fillStrategy = fillStrategy;
     }
 
-    private void init() {
+    protected void init() {
         if (TABLE_TENANT_MAP.isEmpty()) {
             List<TableInfo> tableInfos = TableInfoHelper.getTableInfos();
             for (TableInfo tableInfo : tableInfos) {
@@ -122,22 +121,17 @@ public class DefaultTenantHandler implements TenantHandler {
     public Expression getTenantId() {
         init();
         // 根据空值填充测策略处理
-//        if (String.class.equals(TABLE_LOGIC_DELETE_MAP.get(tableName).getPropertyType())) {
-//            return new StringValue(TABLE_LOGIC_DELETE_MAP.get(tableName).getLogicNotDeleteValue());
-//        } else {
-//            return new LongValue(TABLE_LOGIC_DELETE_MAP.get(tableName).getLogicNotDeleteValue());
-//        }
-        return new NullValue();
+        return null;
     }
 
     @Override
-    public String getTableName() {
-        return null;
+    public String getTableName(String tableName) {
+        return tableName;
     }
 
     @Override
     public String getSchemaName() {
-        return null;
+        return "";
     }
 
     @Override

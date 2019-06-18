@@ -88,7 +88,7 @@ public interface TenantHandler {
      *
      * @return tableName
      */
-    String getTableName();
+    String getTableName(String tableName);
 
     /**
      * SCHEMA多租户模式下获取SCHEMA名
