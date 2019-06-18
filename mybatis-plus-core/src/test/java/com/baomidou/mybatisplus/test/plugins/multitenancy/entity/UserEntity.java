@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy.entity;
+package com.baomidou.mybatisplus.test.plugins.multitenancy.entity;
 
 import com.baomidou.mybatisplus.annotations.*;
 import com.baomidou.mybatisplus.enums.FieldFill;
@@ -173,4 +173,204 @@ public class UserEntity implements Serializable {
     @TableField(value = "deleted", fill = FieldFill.INSERT)
     @TableLogic
     private Integer deleted;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public Integer getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getRegisterChannel() {
+        return registerChannel;
+    }
+
+    public void setRegisterChannel(Integer registerChannel) {
+        this.registerChannel = registerChannel;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Boolean getPhoneNumberConfirmed() {
+        return phoneNumberConfirmed;
+    }
+
+    public void setPhoneNumberConfirmed(Boolean phoneNumberConfirmed) {
+        this.phoneNumberConfirmed = phoneNumberConfirmed;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public Boolean getEmailAddressConfirmed() {
+        return emailAddressConfirmed;
+    }
+
+    public void setEmailAddressConfirmed(Boolean emailAddressConfirmed) {
+        this.emailAddressConfirmed = emailAddressConfirmed;
+    }
+
+    public String getEmailConfirmationCode() {
+        return emailConfirmationCode;
+    }
+
+    public void setEmailConfirmationCode(String emailConfirmationCode) {
+        this.emailConfirmationCode = emailConfirmationCode;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+
+    public Integer getAccessAttemptCount() {
+        return accessAttemptCount;
+    }
+
+    public void setAccessAttemptCount(Integer accessAttemptCount) {
+        this.accessAttemptCount = accessAttemptCount;
+    }
+
+    public String getPasswordResetCode() {
+        return passwordResetCode;
+    }
+
+    public void setPasswordResetCode(String passwordResetCode) {
+        this.passwordResetCode = passwordResetCode;
+    }
+
+    public Date getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
+
+    public Long getCreatorUserId() {
+        return creatorUserId;
+    }
+
+    public void setCreatorUserId(Long creatorUserId) {
+        this.creatorUserId = creatorUserId;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public Long getLastModifierUserId() {
+        return lastModifierUserId;
+    }
+
+    public void setLastModifierUserId(Long lastModifierUserId) {
+        this.lastModifierUserId = lastModifierUserId;
+    }
+
+    public Date getLastModificationTime() {
+        return lastModificationTime;
+    }
+
+    public void setLastModificationTime(Date lastModificationTime) {
+        this.lastModificationTime = lastModificationTime;
+    }
+
+    public Long getDeleterUserId() {
+        return deleterUserId;
+    }
+
+    public void setDeleterUserId(Long deleterUserId) {
+        this.deleterUserId = deleterUserId;
+    }
+
+    public Date getDeletionTime() {
+        return deletionTime;
+    }
+
+    public void setDeletionTime(Date deletionTime) {
+        this.deletionTime = deletionTime;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }
 }

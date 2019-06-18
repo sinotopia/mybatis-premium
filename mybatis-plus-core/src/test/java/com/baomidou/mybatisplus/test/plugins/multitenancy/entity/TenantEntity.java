@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy.entity;
+package com.baomidou.mybatisplus.test.plugins.multitenancy.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;

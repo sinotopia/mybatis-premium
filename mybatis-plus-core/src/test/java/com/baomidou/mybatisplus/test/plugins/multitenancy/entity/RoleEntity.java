@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy.entity;
+package com.baomidou.mybatisplus.test.plugins.multitenancy.entity;
 
 import com.baomidou.mybatisplus.annotations.*;
 import com.baomidou.mybatisplus.enums.FieldFill;
@@ -77,4 +77,76 @@ public class RoleEntity implements Serializable {
     @TableField(value = "deleted", fill = FieldFill.INSERT)
     @TableLogic
     private Integer deleted;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public Long getCreatorUserId() {
+        return creatorUserId;
+    }
+
+    public void setCreatorUserId(Long creatorUserId) {
+        this.creatorUserId = creatorUserId;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public Long getLastModifierUserId() {
+        return lastModifierUserId;
+    }
+
+    public void setLastModifierUserId(Long lastModifierUserId) {
+        this.lastModifierUserId = lastModifierUserId;
+    }
+
+    public Date getLastModificationTime() {
+        return lastModificationTime;
+    }
+
+    public void setLastModificationTime(Date lastModificationTime) {
+        this.lastModificationTime = lastModificationTime;
+    }
+
+    public Long getDeleterUserId() {
+        return deleterUserId;
+    }
+
+    public void setDeleterUserId(Long deleterUserId) {
+        this.deleterUserId = deleterUserId;
+    }
+
+    public Date getDeletionTime() {
+        return deletionTime;
+    }
+
+    public void setDeletionTime(Date deletionTime) {
+        this.deletionTime = deletionTime;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }
 }

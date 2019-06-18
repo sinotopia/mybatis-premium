@@ -1,9 +1,9 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy.service.impl;
+package com.baomidou.mybatisplus.test.plugins.multitenancy.service.impl;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.test.plugins.multentancy.entity.UserRoleEntity;
-import com.baomidou.mybatisplus.test.plugins.multentancy.mapper.UserRoleMapper;
-import com.baomidou.mybatisplus.test.plugins.multentancy.service.UserRoleCrudService;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.entity.UserRoleEntity;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.mapper.UserRoleMapper;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.service.UserRoleCrudService;
 import org.springframework.stereotype.Service;
 
 

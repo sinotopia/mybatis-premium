@@ -1,7 +1,7 @@
-package com.baomidou.mybatisplus.test.plugins.multentancy.mapper;
+package com.baomidou.mybatisplus.test.plugins.multitenancy.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.test.plugins.multentancy.entity.UserEntity;
+import com.baomidou.mybatisplus.test.plugins.multitenancy.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
 
