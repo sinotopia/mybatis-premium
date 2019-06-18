@@ -97,10 +97,10 @@ public class MultitenancySqlParser extends AbstractJsqlParser {
      */
     @Override
     public void processInsert(Insert insert) {
-        // 非多租户表退出执行
         String tableName = insert.getTable().getName();
         TableInfo tableInfo = this.tenantHandler.getTenantTable(tableName);
         if (tableInfo == null) {
+            // 非多租户表退出执行
             return;
         }
         if (MultitenancyStrategy.TABLE.equals(tableInfo.getMultitenancyStrategy())) {
@@ -442,12 +442,13 @@ public class MultitenancySqlParser extends AbstractJsqlParser {
      */
     protected Column getAliasColumn(Table table) {
         StringBuilder column = new StringBuilder();
-        if (null == table.getAlias()) {
-            column.append(table.getName());
-        } else {
+//        if (null == table.getAlias()) {
+//            column.append(table.getName());
+//        }
+        if (table.getAlias() != null) {
             column.append(table.getAlias().getName());
+            column.append(".");
         }
-        column.append(".");
         column.append(this.tenantHandler.getColumn(table.getName()));
         return new Column(column.toString());
     }

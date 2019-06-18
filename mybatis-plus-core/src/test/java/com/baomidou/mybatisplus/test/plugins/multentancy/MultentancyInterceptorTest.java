@@ -63,12 +63,13 @@ public class MultentancyInterceptorTest {
     // select Test
     @Test
     public void selectTest() {
-        UserEntity userEntity = userCrudService.selectById(1);
-        Assert.assertNotNull(userEntity);
-//        EntityWrapper<UserEntity> wrapper = new EntityWrapper<>();
-//        wrapper.eq("id", 1);
-//        UserEntity userEntity1 = userCrudService.selectOne(wrapper);
-//        Assert.assertNotNull(userEntity1);
+//        UserEntity userEntity = userCrudService.selectById(1);
+//        Assert.assertNotNull(userEntity);
+        EntityWrapper<UserEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", 1);
+        wrapper.eq("userName", "root");
+        UserEntity userEntity1 = userCrudService.selectOne(wrapper);
+        Assert.assertNotNull(userEntity1);
 //        List<Integer> ids = new ArrayList<>();
 //        List<UserEntity> userEntityies = userCrudService.selectBatchIds(ids);
 //        Assert.assertFalse(userEntityies.isEmpty());

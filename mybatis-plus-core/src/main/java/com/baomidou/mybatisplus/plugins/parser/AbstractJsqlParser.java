@@ -59,7 +59,9 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
         if (this.allowProcess(metaObject)) {
             try {
-                logger.debug("Original SQL: " + sql);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Original SQL: " + sql);
+                }
                 // fixed github pull/295
                 StringBuilder sqlStringBuilder = new StringBuilder();
                 Statements statements = CCJSqlParserUtil.parseStatements(sql);
@@ -93,7 +95,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
      * </p>
      *
      * @param statement JsqlParser Statement
-     * @return
+     * @return SqlInfo
      */
     public SqlInfo processParser(Statement statement) {
         if (statement instanceof Insert) {
@@ -105,9 +107,18 @@ public abstract class AbstractJsqlParser implements ISqlParser {
         } else if (statement instanceof Delete) {
             this.processDelete((Delete) statement);
         }
-        logger.debug("parser sql: " + statement.toString());
+        if (logger.isDebugEnabled()) {
+            logger.debug("parser sql: " + statement.toString());
+        }
         return SqlInfo.newInstance().setSql(statement.toString());
     }
+
+    /**
+     * 查询
+     *
+     * @param selectBody selectBody
+     */
+    public abstract void processSelectBody(SelectBody selectBody);
 
     /**
      * 新增
@@ -117,13 +128,6 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     public abstract void processInsert(Insert insert);
 
     /**
-     * 删除
-     *
-     * @param delete
-     */
-    public abstract void processDelete(Delete delete);
-
-    /**
      * 更新
      *
      * @param update update
@@ -131,11 +135,11 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     public abstract void processUpdate(Update update);
 
     /**
-     * 查询
+     * 删除
      *
-     * @param selectBody selectBody
+     * @param delete delete
      */
-    public abstract void processSelectBody(SelectBody selectBody);
+    public abstract void processDelete(Delete delete);
 
     /**
      * <p>

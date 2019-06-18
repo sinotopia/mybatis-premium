@@ -130,12 +130,6 @@ public class DefaultTenantHandler implements TenantHandler {
         return new NullValue();
     }
 
-    //    @Override
-//    public boolean doTableFilter(String tableName) {
-//        init();
-//        return !TABLE_LOGIC_DELETE_MAP.containsKey(tableName);
-//    }
-
     @Override
     public String getTableName() {
         return null;

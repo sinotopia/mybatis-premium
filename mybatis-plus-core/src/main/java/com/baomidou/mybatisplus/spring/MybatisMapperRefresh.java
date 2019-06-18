@@ -108,7 +108,7 @@ public class MybatisMapperRefresh implements Runnable {
         final GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         /*
          * 启动 XML 热加载
-		 */
+         */
         if (enabled) {
             beforeTime = SystemClock.now();
             final MybatisMapperRefresh runnable = this;
