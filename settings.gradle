@@ -14,10 +14,10 @@ buildscript {
     }
 }
 
-rootProject.name = 'mybatis-plus-root'
-include 'mybatis-plus'
-include 'mybatis-plus-core'
-include 'mybatis-plus-annotation'
-include 'mybatis-plus-extension'
-include 'mybatis-plus-boot-starter'
-include 'mybatis-plus-boot-starter-test'
+rootProject.name = 'mybatis-premium-root'
+include 'mybatis-premium'
+include 'mybatis-premium-core'
+include 'mybatis-premium-annotation'
+include 'mybatis-premium-extension'
+include 'mybatis-premium-boot-starter'
+include 'mybatis-premium-boot-starter-test'
