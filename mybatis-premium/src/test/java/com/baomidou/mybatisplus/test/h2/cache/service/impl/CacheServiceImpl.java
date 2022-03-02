@@ -16,7 +16,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
 
     //手动撸一个批量删除.
     private void removeBatchById(Collection<Long> idList) {
-        String sqlStatement = sqlStatement(SqlMethod.DELETE_BY_ID);
+        String sqlStatement = getSqlStatement(SqlMethod.DELETE_BY_ID);
         executeBatch(idList, (sqlSession, id) -> sqlSession.delete(sqlStatement, id));
     }
 

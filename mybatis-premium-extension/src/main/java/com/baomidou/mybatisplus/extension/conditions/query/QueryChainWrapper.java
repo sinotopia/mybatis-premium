@@ -31,8 +31,7 @@ import java.util.function.Predicate;
  * @since 2018-12-19
  */
 @SuppressWarnings({"serial"})
-public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>>
-    implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
+public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>> implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 
     private final BaseMapper<T> baseMapper;
 

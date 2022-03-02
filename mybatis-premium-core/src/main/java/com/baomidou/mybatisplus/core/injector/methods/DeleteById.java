@@ -54,27 +54,18 @@ public class DeleteById extends AbstractMethod {
         String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
         if (tableInfo.isWithLogicDelete()) {
-            List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
-                .filter(TableFieldInfo::isWithUpdateFill)
-                .filter(f -> !f.isLogicDelete())
-                .collect(toList());
+            List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream().filter(TableFieldInfo::isWithUpdateFill).filter(f -> !f.isLogicDelete()).collect(toList());
             if (CollectionUtils.isNotEmpty(fieldInfos)) {
-                String sqlSet = "SET " + SqlScriptUtils.convertIf(fieldInfos.stream()
-                    .map(i -> i.getSqlSet(EMPTY)).collect(joining(EMPTY)), "!@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(_parameter.getClass())", true)
-                    + tableInfo.getLogicDeleteSql(false, false);
-                sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
-                    tableInfo.getKeyProperty(), tableInfo.getLogicDeleteSql(true, true));
+                String sqlSet = "SET " + SqlScriptUtils.convertIf(fieldInfos.stream().map(i -> i.getSqlSet(EMPTY)).collect(joining(EMPTY)), "!@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(_parameter.getClass())", true) + tableInfo.getLogicDeleteSql(false, false);
+                sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(), tableInfo.getKeyProperty(), tableInfo.getLogicDeleteSql(true, true));
             } else {
-                sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-                    tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
-                    tableInfo.getLogicDeleteSql(true, true));
+                sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(), tableInfo.getLogicDeleteSql(true, true));
             }
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BY_ID;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-                tableInfo.getKeyProperty());
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }

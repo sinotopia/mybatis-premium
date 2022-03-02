@@ -68,6 +68,15 @@ ext {
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
+//task printProps {
+//    doLast {
+//        println System.properties['rdc-snapshot']
+//        println System.properties['rdc-release']
+//        println System.properties['rdc-username']
+//        println System.properties['rdc-password']
+//    }
+//}
+
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'signing'
@@ -181,12 +190,13 @@ subprojects {
     publishing {
         repositories {
             maven {
-                def userName = System.getProperty("un")
-                def passWord = System.getProperty("ps")
-                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                def userName = System.getProperty("rdc-username")
+                def passWord = System.getProperty("rdc-password")
+                def releasesRepoUrl = System.getProperty(" rdc-release")
+                def snapshotsRepoUrl = System.getProperty("rdc-snapshot")
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
+                println userName
+                println passWord
                 credentials {
                     username userName
                     password passWord

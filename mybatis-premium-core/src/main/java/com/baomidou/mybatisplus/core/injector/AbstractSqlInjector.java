@@ -67,6 +67,6 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * @return 注入的方法集合
      * @since 3.1.2 add  mapperClass
      */
-    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass,TableInfo tableInfo);
+    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo);
 
 }

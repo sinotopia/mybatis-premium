@@ -120,27 +120,11 @@ public abstract class InterceptorIgnoreHelper {
     }
 
     private static InterceptorIgnoreCache chooseCache(InterceptorIgnoreCache mapper, InterceptorIgnoreCache method) {
-        return InterceptorIgnoreCache.builder()
-            .tenantLine(chooseBoolean(mapper.getTenantLine(), method.getTenantLine()))
-            .dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName()))
-            .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
-            .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
-            .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
-            .sharding(chooseBoolean(mapper.getSharding(), method.getSharding()))
-            .others(chooseOthers(mapper.getOthers(), method.getOthers()))
-            .build();
+        return InterceptorIgnoreCache.builder().tenantLine(chooseBoolean(mapper.getTenantLine(), method.getTenantLine())).dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName())).blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack())).illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql())).dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission())).sharding(chooseBoolean(mapper.getSharding(), method.getSharding())).others(chooseOthers(mapper.getOthers(), method.getOthers())).build();
     }
 
     private static InterceptorIgnoreCache buildInterceptorIgnoreCache(String name, InterceptorIgnore ignore) {
-        return InterceptorIgnoreCache.builder()
-            .tenantLine(getBoolean("tenantLine", name, ignore.tenantLine()))
-            .dynamicTableName(getBoolean("dynamicTableName", name, ignore.dynamicTableName()))
-            .blockAttack(getBoolean("blockAttack", name, ignore.blockAttack()))
-            .illegalSql(getBoolean("illegalSql", name, ignore.illegalSql()))
-            .dataPermission(getBoolean("dataPermission", name, ignore.dataPermission()))
-            .sharding(getBoolean("sharding", name, ignore.sharding()))
-            .others(getOthers(name, ignore.others()))
-            .build();
+        return InterceptorIgnoreCache.builder().tenantLine(getBoolean("tenantLine", name, ignore.tenantLine())).dynamicTableName(getBoolean("dynamicTableName", name, ignore.dynamicTableName())).blockAttack(getBoolean("blockAttack", name, ignore.blockAttack())).illegalSql(getBoolean("illegalSql", name, ignore.illegalSql())).dataPermission(getBoolean("dataPermission", name, ignore.dataPermission())).sharding(getBoolean("sharding", name, ignore.sharding())).others(getOthers(name, ignore.others())).build();
     }
 
     private static Boolean getBoolean(String node, String name, String value) {
