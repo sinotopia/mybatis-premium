@@ -1,8 +1,8 @@
 import java.time.LocalDateTime
 
 allprojects {
-    group = 'com.baomidou'
-    version = "3.5.1"
+    group = 'com.ascrud'
+    version = "4.0.0-SNAPSHOT"
 }
 
 ext {
@@ -68,15 +68,6 @@ ext {
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
-//task printProps {
-//    doLast {
-//        println System.properties['rdc-snapshot']
-//        println System.properties['rdc-release']
-//        println System.properties['rdc-username']
-//        println System.properties['rdc-password']
-//    }
-//}
-
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'signing'
@@ -106,7 +97,7 @@ subprojects {
         options.encoding = 'UTF-8'
         options.warnings = false
         options.deprecation = false
-        options.compilerArgs += ["-parameters"]
+//        options.compilerArgs += ["-parameters"]
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
 
@@ -192,11 +183,9 @@ subprojects {
             maven {
                 def userName = System.getProperty("rdc-username")
                 def passWord = System.getProperty("rdc-password")
-                def releasesRepoUrl = System.getProperty(" rdc-release")
+                def releasesRepoUrl = System.getProperty("rdc-release")
                 def snapshotsRepoUrl = System.getProperty("rdc-snapshot")
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-                println userName
-                println passWord
                 credentials {
                     username userName
                     password passWord
